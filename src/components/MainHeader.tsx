@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { HeartPulse, Sparkles, LayoutGrid, Box, LayoutList, GitCompare, MessageSquare, Menu } from "lucide-react";
+import { HeartPulse, Sparkles, LayoutGrid, Box, LayoutList, Globe, MessageSquare, Menu } from "lucide-react";
 
 interface MainHeaderProps {
   activeTab: string;
@@ -105,7 +105,7 @@ export default function MainHeader({
           {showSuggestions && (
             <div style={{ position: "absolute", top: "calc(100% + 12px)", left: 0, right: 0, background: "white", border: "1px solid #f1f5f9", borderRadius: "16px", boxShadow: "0 20px 40px rgba(0,0,0,0.1)", padding: "8px", zIndex: 110, animation: "fadeInUp 0.2s ease-out" }}>
               <div style={{ color: "#94a3b8", fontSize: "0.7rem", fontWeight: 800, padding: "8px 12px", textTransform: "uppercase", letterSpacing: "0.08em" }}>Navigation</div>
-              {commands.filter(c => c.key.includes(searchValue.toLowerCase())).map((cmd) => (
+            {commands.filter(c => c.key.includes(searchValue.toLowerCase())).map((cmd) => (
                 <button 
                   key={cmd.key} 
                   onClick={cmd.action}
@@ -130,7 +130,7 @@ export default function MainHeader({
             { id: "dashboard", icon: <LayoutGrid size={18} />, label: "Dashboard" },
             { id: "vault", icon: <Box size={18} />, label: "Vault" },
             { id: "coverage", icon: <LayoutList size={18} />, label: "Payer" },
-            { id: "diff", icon: <GitCompare size={18} />, label: "Difference" },
+            { id: "diff", icon: <Globe size={18} />, label: "Monitor" },
             { id: "pulseai", icon: <MessageSquare size={18} />, label: "PulseAI" }
           ].map((tab, i) => (
             <React.Fragment key={tab.id}>
