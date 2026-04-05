@@ -5,7 +5,7 @@ import { LayoutGrid, Box, Moon, LayoutList } from "lucide-react";
 import { useUser } from "@auth0/nextjs-auth0";
 import CoverageGrid from "@/components/CoverageGrid";
 import DashboardOverview from "@/components/DashboardOverview";
-import PolicyVault from "@/components/PolicyVault";
+import PolicyVault from "@/app/policyvault/PolicyVault";
 import MainHeader from "@/components/MainHeader";
 
 export default function PolicyPulse() {
