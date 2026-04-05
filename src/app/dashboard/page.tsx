@@ -1,13 +1,8 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
-<<<<<<< HEAD
-import { LayoutGrid, Box, GitCompare, LayoutList, MessageSquare } from "lucide-react";
-import { useUser } from "@auth0/nextjs-auth0/client";
-=======
 import { LayoutGrid, Box, Globe, LayoutList, MessageSquare } from "lucide-react";
-import { useUser } from "@auth0/nextjs-auth0";
->>>>>>> bce27e75676286233e72aa2436f01536cfdd91f2
+import { useUser } from "@auth0/nextjs-auth0/client";
 import CoverageGrid from "@/app/coverage/CoverageGrid";
 import DashboardOverview from "@/components/DashboardOverview";
 import PolicyVault from "@/app/policyvault/PolicyVault";
