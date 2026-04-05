@@ -9,7 +9,7 @@ import DashboardOverview from "@/components/DashboardOverview";
 import PolicyVault from "@/app/policyvault/PolicyVault";
 import MainHeader from "@/components/MainHeader";
 import AIChatbot from "@/components/AIChatbot";
-import PolicyIntelligenceAudit from "@/components/PolicyIntelligenceAudit";
+import PolicyDiffViewer from "@/components/DiffViewer";
 import PatientProfile from "@/components/PatientProfile";
 
 export default function PolicyPulse() {
@@ -116,7 +116,7 @@ export default function PolicyPulse() {
             setActiveTab={setActiveTab}
           />
         ) : activeTab === "audit" ? (
-          <PolicyIntelligenceAudit />
+          <PolicyDiffViewer />
         ) : activeTab === "profile" ? (
           <PatientProfile />
         ) : activeTab === "pulseai" ? (
