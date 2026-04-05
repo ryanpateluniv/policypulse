@@ -203,7 +203,44 @@ export default function PolicyVault({ uploadedDocs, setUploadedDocs, selectedDoc
                 <Sparkles size={14} /> Preview AI
               </button>
               <button
-                onClick={(e) => { e.stopPropagation(); }}
+                onClick={async (e) => {
+                  e.stopPropagation();
+                  if (!doc.document_id) {
+                    // Try to download by file name from Supabase storage
+                    try {
+                      const { data, error } = await supabase.storage
+                        .from("policy-documents")
+                        .createSignedUrl(doc.name, 60);
+                      if (error || !data?.signedUrl) throw new Error("No URL");
+                      const a = document.createElement("a");
+                      a.href = data.signedUrl;
+                      a.download = doc.name;
+                      a.click();
+                    } catch {
+                      alert("Download not available. Please re-upload the document.");
+                    }
+                    return;
+                  }
+                  try {
+                    // Try fetching from policy_documents table to get file path
+                    const { data: docRecord } = await supabase
+                      .from("policy_documents")
+                      .select("file_path, title")
+                      .eq("id", doc.document_id)
+                      .single();
+                    if (!docRecord?.file_path) throw new Error("No file path");
+                    const { data: urlData, error } = await supabase.storage
+                      .from("policy-documents")
+                      .createSignedUrl(docRecord.file_path, 60);
+                    if (error || !urlData?.signedUrl) throw new Error("Signed URL failed");
+                    const a = document.createElement("a");
+                    a.href = urlData.signedUrl;
+                    a.download = docRecord.title || doc.name;
+                    a.click();
+                  } catch {
+                    alert("Could not generate download link. Please try again.");
+                  }
+                }}
                 style={{
                   width: "40px",
                   height: "40px",

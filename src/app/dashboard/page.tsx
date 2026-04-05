@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
-import { LayoutGrid, Box, GitCompare, LayoutList, MessageSquare } from "lucide-react";
+import { LayoutGrid, Box, Globe, LayoutList, MessageSquare } from "lucide-react";
 import { useUser } from "@auth0/nextjs-auth0";
 import CoverageGrid from "@/app/coverage/CoverageGrid";
 import DashboardOverview from "@/components/DashboardOverview";
@@ -34,7 +34,7 @@ export default function PolicyPulse() {
     { key: "/grid", label: "Dashboard Grid", icon: <LayoutGrid size={16} />, action: () => setActiveTab("dashboard") },
     { key: "/vault", label: "Policy Vault", icon: <Box size={16} />, action: () => setActiveTab("vault") },
     { key: "/payer", label: "Payer Coverage", icon: <LayoutList size={16} />, action: () => setActiveTab("coverage") },
-    { key: "/diff", label: "Policy Difference", icon: <GitCompare size={16} />, action: () => setActiveTab("diff") },
+    { key: "/monitor", label: "Market Monitor", icon: <Globe size={16} />, action: () => setActiveTab("diff") },
     { key: "/ai", label: "Ask PulseAI", icon: <MessageSquare size={16} />, action: () => setActiveTab("pulseai") },
   ];
 
@@ -58,7 +58,7 @@ export default function PolicyPulse() {
 
       <main className={activeTab === "pulseai" ? "" : "px-4 sm:px-10 pb-10 pt-6"}>
         {activeTab === "dashboard" ? (
-          <DashboardOverview user={user} greeting={greeting} setActiveTab={setActiveTab} />
+          <DashboardOverview user={user} greeting={greeting} setActiveTab={setActiveTab} uploadedDocs={uploadedDocs} />
         ) : activeTab === "coverage" ? (
           <CoverageGrid />
         ) : activeTab === "vault" ? (
@@ -69,7 +69,7 @@ export default function PolicyPulse() {
             setSelectedDoc={setSelectedDoc}
           />
         ) : activeTab === "diff" ? (
-          <DiffViewer documents={uploadedDocs} />
+          <DiffViewer />
         ) : activeTab === "pulseai" ? (
           <AIChatbot />
         ) : (

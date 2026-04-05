@@ -45,15 +45,18 @@ export default function MainHeader({
         gap: "1rem"
       }}
     >
-      {/* Left side: Logo */}
-      <div style={{ display: "flex", alignItems: "center", flexShrink: 0 }}>
+      {/* Left side: Logo — click to go home */}
+      <button
+        onClick={() => setActiveTab("dashboard")}
+        style={{ display: "flex", alignItems: "center", flexShrink: 0, background: "transparent", border: "none", cursor: "pointer", padding: 0 }}
+      >
         <div style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
           <div style={{ background: "#084d38", borderRadius: "12px", padding: "10px", display: "flex", alignItems: "center", justifyContent: "center", boxShadow: "0 4px 12px rgba(8, 77, 56, 0.2)" }}>
             <HeartPulse strokeWidth={2.5} size={22} color="#ffffff" />
           </div>
           <span className="hidden sm:inline" style={{ fontWeight: 800, fontSize: "1.2rem", color: "#0f172a", letterSpacing: "-0.03em" }}>PolicyPulse</span>
         </div>
-      </div>
+      </button>
 
       {/* Center: Search Bar - Responsive Squeeze */}
       <div style={{ flex: 1, maxWidth: "600px", position: "relative" }} className="flex justify-center">
@@ -69,7 +72,7 @@ export default function MainHeader({
             <input
               ref={searchInputRef}
               type="text"
-              placeholder="PulseAI Search..."
+              placeholder="Type / to navigate or search policies..."
               value={searchValue}
               onChange={(e) => {
                 setSearchValue(e.target.value);
