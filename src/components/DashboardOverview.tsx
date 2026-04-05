@@ -66,11 +66,6 @@ export default function DashboardOverview({ user, greeting, setActiveTab }: Dash
               <span style={{ fontSize: "0.8rem", color: "#6b7280" }}>Policies</span>
             </div>
             <div style={{ height: "16px", width: "1px", background: "#e5e7eb" }} />
-            <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-              <Activity size={16} color="#3b82f6" />
-              <span style={{ fontSize: "0.8rem", fontWeight: 700, color: "#111" }}>12</span>
-              <span style={{ fontSize: "0.8rem", color: "#6b7280" }}>Live</span>
-            </div>
           </div>
         </div>
       </section>
@@ -130,55 +125,7 @@ export default function DashboardOverview({ user, greeting, setActiveTab }: Dash
           </div>
         </div>
 
-        {/* Card 2: Live Detection Stream */}
-        <div style={{
-          background: "white",
-          borderRadius: "24px",
-          padding: "1.5rem",
-          border: "1px solid #f1f5f9",
-          boxShadow: "0 4px 6px -1px rgba(0, 0, 0, 0.05)",
-          display: "flex",
-          flexDirection: "column"
-        }}>
-          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "1.5rem" }}>
-            <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
-              <div style={{ width: "8px", height: "8px", borderRadius: "50%", background: "#ef4444", animation: "pulse 2s infinite" }} />
-              <span style={{ fontWeight: 600, fontSize: "1.1rem" }}>Live Detection Feed</span>
-            </div>
-            <span style={{ fontSize: "0.75rem", background: "#fef2f2", color: "#ef4444", padding: "2px 8px", borderRadius: "100px", fontWeight: 700 }}>ACTIVE</span>
-          </div>
-          
-          <style>{`
-            @keyframes pulse {
-              0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7); }
-              70% { transform: scale(1); box-shadow: 0 0 0 8px rgba(239, 68, 68, 0); }
-              100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
-            }
-          `}</style>
-
-          <div style={{ flex: 1, overflow: "hidden" }}>
-            {[
-              { drug: "Opdivo", type: "Policy Change", time: "Just now", status: "Parsing...", progress: 65 },
-              { drug: "Stelara", type: "Payer Update", time: "1m ago", status: "Archiving", progress: 100 },
-              { drug: "Dupixent", type: "New Indications", time: "4m ago", status: "Summarized", progress: 100 }
-            ].map((item, i) => (
-              <div key={i} style={{ display: "flex", flexDirection: "column", gap: "8px", paddingBottom: "1rem", marginBottom: "1rem", borderBottom: i < 2 ? "1px solid #f1f5f9" : "none" }}>
-                <div style={{ display: "flex", justifyContent: "space-between", fontSize: "0.9rem" }}>
-                  <span style={{ fontWeight: 600 }}>{item.drug} &middot; {item.type}</span>
-                  <span style={{ fontSize: "0.75rem", color: "#9ca3af" }}>{item.time}</span>
-                </div>
-                <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
-                  <div style={{ flex: 1, height: "4px", background: "#f3f4f6", borderRadius: "2px", overflow: "hidden" }}>
-                    <div style={{ width: `${item.progress}%`, height: "100%", background: item.progress < 100 ? "#3b82f6" : "#10b981", borderRadius: "2px", transition: "width 0.5s ease" }} />
-                  </div>
-                  <span style={{ fontSize: "0.7rem", fontWeight: 700, color: item.progress < 100 ? "#3b82f6" : "#10b981", textTransform: "uppercase" }}>{item.status}</span>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-
-        {/* Card 3: Coverage Overview */}
+        {/* Card 2: Coverage Overview (Moved up) */}
         <div style={{
           background: "white",
           borderRadius: "24px",
@@ -211,6 +158,34 @@ export default function DashboardOverview({ user, greeting, setActiveTab }: Dash
                 </div>
               </div>
             ))}
+          </div>
+        </div>
+
+        {/* Card 3: Quick Insights */}
+        <div style={{
+          background: "white",
+          borderRadius: "24px",
+          padding: "1.5rem",
+          border: "1px solid #f1f5f9",
+          boxShadow: "0 4px 6px -1px rgba(0, 0, 0, 0.05)"
+        }}>
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "1.5rem" }}>
+            <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+              <div style={{ background: "#eff6ff", padding: "8px", borderRadius: "10px" }}>
+                <Sparkles size={20} color="#3b82f6" />
+              </div>
+              <span style={{ fontWeight: 600, fontSize: "1rem" }}>PulseAI Quick Look</span>
+            </div>
+          </div>
+          <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
+            <div style={{ padding: "12px", borderRadius: "12px", background: "#f8fafc", fontSize: "0.85rem", color: "#475569", border: "1px solid #f1f5f9" }}>
+              <span style={{ fontWeight: 700, color: "#1e293b", display: "block", marginBottom: "4px" }}>Trending Drug</span>
+              Opdivo (nivolumab) search volume up 24% this week.
+            </div>
+            <div style={{ padding: "12px", borderRadius: "12px", background: "#f8fafc", fontSize: "0.85rem", color: "#475569", border: "1px solid #f1f5f9" }}>
+              <span style={{ fontWeight: 700, color: "#1e293b", display: "block", marginBottom: "4px" }}>Policy Update</span>
+              Aetna Oncology guidelines refreshed for Q2.
+            </div>
           </div>
         </div>
 
