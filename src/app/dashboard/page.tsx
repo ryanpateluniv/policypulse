@@ -3,7 +3,7 @@
 import { useState, useEffect, useRef } from "react";
 import { LayoutGrid, Box, GitCompare, LayoutList, MessageSquare } from "lucide-react";
 import { useUser } from "@auth0/nextjs-auth0";
-import CoverageGrid from "@/components/CoverageGrid";
+import CoverageGrid from "@/app/coverage/CoverageGrid";
 import DashboardOverview from "@/components/DashboardOverview";
 import PolicyVault from "@/app/policyvault/PolicyVault";
 import MainHeader from "@/components/MainHeader";
@@ -14,11 +14,7 @@ export default function PolicyPulse() {
   const [activeTab, setActiveTab] = useState("dashboard");
   const [searchValue, setSearchValue] = useState("");
   const [showSuggestions, setShowSuggestions] = useState(false);
-  const [uploadedDocs, setUploadedDocs] = useState([
-    { name: "Aetna Oncology Policy 2024.pdf", size: "2.4 MB", date: "2h ago", status: "Analyzed" },
-    { name: "Cigna NSCLC Criteria.pdf", size: "1.1 MB", date: "5h ago", status: "Analyzed" },
-    { name: "UHC Medical Policy Q1.pdf", size: "3.2 MB", date: "Yesterday", status: "Analyzed" }
-  ]);
+  const [uploadedDocs, setUploadedDocs] = useState<any[]>([]);
   const [selectedDoc, setSelectedDoc] = useState<any>(null);
   const searchInputRef = useRef<HTMLInputElement>(null);
   const { user, isLoading } = useUser();

@@ -26,44 +26,6 @@ function getStatusInfo(entry: any) {
   return COLORS.not_addressed;
 }
 
-const MOCK_DRUGS = [
-  { id: "1", brand_name: "Keytruda", generic_name: "pembrolizumab", drug_class: "PD-1 inhibitor" },
-  { id: "2", brand_name: "Humira", generic_name: "adalimumab", drug_class: "TNF inhibitor" },
-  { id: "3", brand_name: "Opdivo", generic_name: "nivolumab", drug_class: "PD-1 inhibitor" },
-];
-
-const MOCK_COVERAGE: Record<string, any[]> = {
-  "1": [
-    { payers: { name: "Aetna" }, indication: "Non-small cell lung cancer (NSCLC)", coverage_status: "covered_with_pa", is_preferred: false, prior_auth_required: true, step_therapy_required: false, step_therapy_drugs: [], clinical_criteria: "Various criteria for recurrent/advanced/metastatic NSCLC. PD-L1 positive. No EGFR/ALK unless testing not feasible.", approval_duration: "24 months", exclusions: null, age_restrictions: null },
-    { payers: { name: "Aetna" }, indication: "Cutaneous melanoma", coverage_status: "covered_with_pa", is_preferred: false, prior_auth_required: true, step_therapy_required: false, step_therapy_drugs: [], clinical_criteria: "Unresectable/metastatic single agent or adjuvant post-resection stage IIB+.", approval_duration: "12-24 months", exclusions: null, age_restrictions: null },
-    { payers: { name: "Aetna" }, indication: "Head and neck cancer", coverage_status: "covered_with_pa", is_preferred: false, prior_auth_required: true, step_therapy_required: false, step_therapy_drugs: [], clinical_criteria: "Various criteria for HNSCC including neoadjuvant/adjuvant and recurrent settings.", approval_duration: "12-24 months", exclusions: null, age_restrictions: null },
-    { payers: { name: "Aetna" }, indication: "Breast cancer (TNBC)", coverage_status: "covered_with_pa", is_preferred: false, prior_auth_required: true, step_therapy_required: false, step_therapy_drugs: [], clinical_criteria: "Recurrent/unresectable/metastatic TNBC with PD-L1 or high-risk early-stage neoadjuvant.", approval_duration: "12-24 months", exclusions: null, age_restrictions: null },
-    { payers: { name: "Aetna" }, indication: "Renal cell carcinoma", coverage_status: "covered_with_pa", is_preferred: false, prior_auth_required: true, step_therapy_required: false, step_therapy_drugs: [], clinical_criteria: "First-line with axitinib/lenvatinib or adjuvant post-nephrectomy.", approval_duration: "12-24 months", exclusions: null, age_restrictions: null },
-    { payers: { name: "Aetna" }, indication: "Multiple myeloma", coverage_status: "not_covered", is_preferred: false, prior_auth_required: false, step_therapy_required: false, step_therapy_drugs: [], clinical_criteria: "Experimental, investigational, or unproven.", approval_duration: null, exclusions: "Increased mortality risk", age_restrictions: null },
-    { payers: { name: "UnitedHealthcare" }, indication: "Non-small cell lung cancer (NSCLC)", coverage_status: "covered_with_pa", is_preferred: true, prior_auth_required: true, step_therapy_required: false, step_therapy_drugs: [], clinical_criteria: "NCCN category 1, 2A, 2B. PD-L1 expression positive >= 50%.", approval_duration: null, exclusions: null, age_restrictions: null },
-    { payers: { name: "UnitedHealthcare" }, indication: "Head and neck cancer", coverage_status: "covered_with_pa", is_preferred: false, prior_auth_required: true, step_therapy_required: true, step_therapy_drugs: ["Loqtorzi (toripalimab-tpzi)"], clinical_criteria: "Nasopharyngeal carcinoma: requires trial of Loqtorzi first. History of intolerance or contraindication needed.", approval_duration: null, exclusions: null, age_restrictions: null },
-    { payers: { name: "UnitedHealthcare" }, indication: "Squamous cell skin cancer", coverage_status: "covered_with_pa", is_preferred: false, prior_auth_required: true, step_therapy_required: true, step_therapy_drugs: ["Libtayo (cemiplimab-rwlc)"], clinical_criteria: "Requires trial of Libtayo first. History of intolerance or contraindication needed.", approval_duration: null, exclusions: null, age_restrictions: null },
-    { payers: { name: "Cigna" }, indication: "Non-small cell lung cancer (NSCLC)", coverage_status: "covered_with_pa", is_preferred: true, prior_auth_required: true, step_therapy_required: false, step_therapy_drugs: [], clinical_criteria: "FDA approved indication or NCCN category 1, 2A, 2B recommendation.", approval_duration: "up to 12 months", exclusions: null, age_restrictions: null },
-    { payers: { name: "Cigna" }, indication: "Head and neck cancer", coverage_status: "covered_with_pa", is_preferred: false, prior_auth_required: true, step_therapy_required: true, step_therapy_drugs: ["Loqtorzi (toripalimab)"], clinical_criteria: "Nasopharyngeal carcinoma: must try Loqtorzi first or demonstrate intolerance/contraindication.", approval_duration: "up to 12 months", exclusions: null, age_restrictions: null },
-    { payers: { name: "Cigna" }, indication: "Breast cancer (TNBC)", coverage_status: "covered_with_pa", is_preferred: false, prior_auth_required: true, step_therapy_required: false, step_therapy_drugs: [], clinical_criteria: "FDA approved indication or NCCN recommendation.", approval_duration: "up to 12 months", exclusions: null, age_restrictions: null },
-    { payers: { name: "Cigna" }, indication: "Cutaneous melanoma", coverage_status: "covered_with_pa", is_preferred: false, prior_auth_required: true, step_therapy_required: false, step_therapy_drugs: [], clinical_criteria: "FDA approved indication or NCCN recommendation.", approval_duration: "up to 12 months", exclusions: null, age_restrictions: null },
-    { payers: { name: "Cigna" }, indication: "Renal cell carcinoma", coverage_status: "covered_with_pa", is_preferred: false, prior_auth_required: true, step_therapy_required: false, step_therapy_drugs: [], clinical_criteria: "FDA approved indication or NCCN recommendation.", approval_duration: "up to 12 months", exclusions: null, age_restrictions: null },
-  ],
-  "2": [
-    { payers: { name: "Aetna" }, indication: "Rheumatoid arthritis", coverage_status: "covered_with_pa", is_preferred: false, prior_auth_required: true, step_therapy_required: true, step_therapy_drugs: ["methotrexate", "Rinvoq", "Xeljanz"], clinical_criteria: "Adults with moderately to severely active RA. Prior biologic or failed MTX required.", approval_duration: null, exclusions: "Active TB", age_restrictions: "18+" },
-    { payers: { name: "Aetna" }, indication: "Crohn's disease", coverage_status: "covered_with_pa", is_preferred: false, prior_auth_required: true, step_therapy_required: false, step_therapy_drugs: [], clinical_criteria: "Moderately to severely active CD. Negative TB test required.", approval_duration: null, exclusions: "Active TB", age_restrictions: "6+" },
-    { payers: { name: "Aetna" }, indication: "Plaque psoriasis", coverage_status: "covered_with_pa", is_preferred: false, prior_auth_required: true, step_therapy_required: true, step_therapy_drugs: ["Sotyktu", "Otezla", "methotrexate"], clinical_criteria: "Moderate to severe. Prior biologic or failed phototherapy/MTX/cyclosporine.", approval_duration: null, exclusions: "Active TB", age_restrictions: "18+" },
-    { payers: { name: "Aetna" }, indication: "Ulcerative colitis", coverage_status: "covered_with_pa", is_preferred: false, prior_auth_required: true, step_therapy_required: false, step_therapy_drugs: [], clinical_criteria: "Moderately to severely active UC.", approval_duration: null, exclusions: "Active TB", age_restrictions: "5+" },
-    { payers: { name: "UnitedHealthcare" }, indication: "Rheumatoid arthritis", coverage_status: "not_covered", is_preferred: false, prior_auth_required: false, step_therapy_required: false, step_therapy_drugs: [], clinical_criteria: "Brand Humira excluded. Biosimilar adalimumab products preferred.", approval_duration: null, exclusions: "Brand Humira not covered", age_restrictions: null },
-    { payers: { name: "UnitedHealthcare" }, indication: "Crohn's disease", coverage_status: "not_covered", is_preferred: false, prior_auth_required: false, step_therapy_required: false, step_therapy_drugs: [], clinical_criteria: "Brand Humira excluded. Biosimilar products preferred.", approval_duration: null, exclusions: "Brand Humira not covered", age_restrictions: null },
-    { payers: { name: "UnitedHealthcare" }, indication: "Plaque psoriasis", coverage_status: "not_covered", is_preferred: false, prior_auth_required: false, step_therapy_required: false, step_therapy_drugs: [], clinical_criteria: "Brand Humira excluded.", approval_duration: null, exclusions: null, age_restrictions: null },
-    { payers: { name: "UnitedHealthcare" }, indication: "Ulcerative colitis", coverage_status: "not_covered", is_preferred: false, prior_auth_required: false, step_therapy_required: false, step_therapy_drugs: [], clinical_criteria: "Brand Humira excluded.", approval_duration: null, exclusions: null, age_restrictions: null },
-    { payers: { name: "Cigna" }, indication: "Rheumatoid arthritis", coverage_status: "not_covered", is_preferred: false, prior_auth_required: false, step_therapy_required: false, step_therapy_drugs: [], clinical_criteria: "Not covered for Employer Plans. Biosimilar required.", approval_duration: null, exclusions: "Brand not covered for employer plans", age_restrictions: null },
-    { payers: { name: "Cigna" }, indication: "Crohn's disease", coverage_status: "not_covered", is_preferred: false, prior_auth_required: false, step_therapy_required: false, step_therapy_drugs: [], clinical_criteria: "Not covered for Employer Plans.", approval_duration: null, exclusions: null, age_restrictions: null },
-    { payers: { name: "Cigna" }, indication: "Plaque psoriasis", coverage_status: "not_covered", is_preferred: false, prior_auth_required: false, step_therapy_required: false, step_therapy_drugs: [], clinical_criteria: "Not covered for Employer Plans.", approval_duration: null, exclusions: null, age_restrictions: null },
-    { payers: { name: "Cigna" }, indication: "Ulcerative colitis", coverage_status: "not_covered", is_preferred: false, prior_auth_required: false, step_therapy_required: false, step_therapy_drugs: [], clinical_criteria: "Not covered for Employer Plans.", approval_duration: null, exclusions: null, age_restrictions: null },
-  ],
-};
 
 function DetailPanel({ entry, onClose }: any) {
   if (!entry) return null;
@@ -152,7 +114,7 @@ export default function CoverageGrid() {
   const [hoveredCell, setHoveredCell] = useState<string | null>(null);
   const [selectedEntry, setSelectedEntry] = useState<any>(null);
   const searchRef = useRef<HTMLInputElement>(null);
-  const USE_API = false;
+  const USE_API = true;
 
   useEffect(() => {
     if (search.length < 2) { setSuggestions([]); return; }
@@ -339,8 +301,8 @@ export default function CoverageGrid() {
           <h2 style={{ fontSize: "1.5rem", fontWeight: 700, color: "#1e293b", margin: "0 0 8px" }}>Begin Your Search</h2>
           <p style={{ color: "#64748b", maxWidth: "420px", margin: "0 auto 24px", lineHeight: 1.6 }}>Start typing a drug name above to analyze its coverage landscape across our high-fidelity policy database.</p>
           <div style={{ display: "flex", gap: "10px", justifyContent: "center" }}>
-            {MOCK_DRUGS.map(d => (
-              <button key={d.id} onClick={() => selectDrug(d)} style={{ background: "white", border: "1px solid #f1f5f9", padding: "10px 20px", borderRadius: "100px", fontWeight: 600, color: "#475569", cursor: "pointer", transition: "all 0.2s" }} onMouseOver={e => e.currentTarget.style.borderColor = "#084d38"}>{d.brand_name}</button>
+            {["Keytruda", "Humira", "Opdivo"].map(name => (
+              <button key={name} onClick={() => setSearch(name)} style={{ background: "white", border: "1px solid #f1f5f9", padding: "10px 20px", borderRadius: "100px", fontWeight: 600, color: "#475569", cursor: "pointer", transition: "all 0.2s" }} onMouseOver={e => e.currentTarget.style.borderColor = "#084d38"} onMouseOut={e => e.currentTarget.style.borderColor = "#f1f5f9"}>{name}</button>
             ))}
           </div>
         </div>

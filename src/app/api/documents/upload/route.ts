@@ -124,7 +124,7 @@ export async function POST(request: NextRequest) {
       .from('policy_documents')
       .update({
         status: 'parsed',
-        title: parsed.document_title || file.name,
+        title: file.name,
         effective_date: parsed.effective_date || null,
       })
       .eq('id', doc.id)
