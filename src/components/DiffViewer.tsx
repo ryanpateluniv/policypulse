@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from "react";
 import { Search, Globe, RefreshCcw, Sparkles, AlertCircle, FileCheck, ExternalLink, ArrowRight, ShieldAlert } from "lucide-react";
 
-export default function MarketMonitor() {
+export default function MarketMonitor({ documents }: { documents?: any[] }) {
   const [isScanning, setIsScanning] = useState(false);
   const [lastCheck, setLastCheck] = useState("2026-04-03 09:45 AM");
   const [results, setResults] = useState<any>(null);

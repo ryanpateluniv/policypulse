@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef } from "react";
 import { LayoutGrid, Box, GitCompare, LayoutList, MessageSquare } from "lucide-react";
-import { useUser } from "@auth0/nextjs-auth0";
+import { useUser } from "@auth0/nextjs-auth0/client";
 import CoverageGrid from "@/app/coverage/CoverageGrid";
 import DashboardOverview from "@/components/DashboardOverview";
 import PolicyVault from "@/app/policyvault/PolicyVault";
@@ -43,8 +43,8 @@ export default function PolicyPulse() {
 
   return (
     <div style={{ minHeight: "100vh", background: "white" }}>
-      <MainHeader 
-        activeTab={activeTab} 
+      <MainHeader
+        activeTab={activeTab}
         setActiveTab={setActiveTab}
         searchValue={searchValue}
         setSearchValue={setSearchValue}
@@ -62,8 +62,8 @@ export default function PolicyPulse() {
         ) : activeTab === "coverage" ? (
           <CoverageGrid />
         ) : activeTab === "vault" ? (
-          <PolicyVault 
-            uploadedDocs={uploadedDocs} 
+          <PolicyVault
+            uploadedDocs={uploadedDocs}
             setUploadedDocs={setUploadedDocs}
             selectedDoc={selectedDoc}
             setSelectedDoc={setSelectedDoc}
