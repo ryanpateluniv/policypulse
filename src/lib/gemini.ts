@@ -24,15 +24,24 @@ export async function callGemini(prompt: string) {
 }
 
 export async function parsePolicyDocument(pdfText: string) {
-  const prompt = `You are a medical policy document parser. Extract drug coverage information from this document.
+  const text = pdfText.substring(0, 60000)
 
-IMPORTANT RULES:
-- Focus ONLY on these drugs: Keytruda (pembrolizumab), Opdivo (nivolumab), Humira (adalimumab), Tecentriq (atezolizumab), Libtayo (cemiplimab), Keytruda Qlex
-- If a drug above is not in the document, skip it
-- Return ONLY valid JSON with NO markdown backticks, NO explanation, NO extra text
-- Start your response with { and end with }
+  const prompt = `You are a medical policy document parser. Your job is to extract ALL drug coverage information from this health insurance policy document.
 
-Return this exact JSON format:
+RULES:
+1. Extract the TOP 20 most clinically significant drugs mentioned in this document that have coverage criteria, prior authorization requirements, or step therapy requirements. Prioritize cancer drugs, biologics, and specialty medications.
+2. Do NOT limit to specific drugs. Extract ALL of them.
+3. Return ONLY valid JSON. No markdown backticks. No explanation. Start with { end with }
+4. List EACH medical indication separately. NEVER combine them as "All indications" or "All conditions".
+5. If a drug is blanket not-covered for all uses, list the individual FDA-approved indications for that drug as separate not_covered entries.
+6. Include BOTH covered AND not-covered indications.
+7. Keep clinical_criteria under 200 characters but include key requirements.
+8. Keep clinical_criteria under 200 characters but include key requirements.
+9. If the document covers many similar products (biosimilars, generics), extract ONLY the original brand-name drug and up to 3 biosimilars. Skip the rest to keep output concise.
+10. Limit total output to a maximum of 20 drugs. Prioritize the most clinically significant ones.
+
+
+JSON format:
 {
   "payer_name": "string",
   "document_title": "string",
@@ -40,19 +49,19 @@ Return this exact JSON format:
   "drugs": [
     {
       "brand_name": "string",
-      "generic_name": "string",
+      "generic_name": "string or null",
       "indications": [
         {
-          "indication_name": "string",
-          "coverage_status": "covered | covered_with_pa | not_covered | not_addressed",
+          "indication_name": "specific disease name",
+          "coverage_status": "covered | covered_with_pa | not_covered",
           "is_preferred": true/false,
           "prior_auth_required": true/false,
           "step_therapy_required": true/false,
-          "step_therapy_drugs": ["drug names that must be tried first"],
-          "clinical_criteria": "brief summary of approval criteria (max 200 chars)",
-          "approval_duration": "e.g. 12 months",
-          "exclusions": "exclusion criteria or null",
-          "age_restrictions": "e.g. 18+ or null"
+          "step_therapy_drugs": ["drugs that must be tried first"],
+          "clinical_criteria": "brief approval requirements (max 200 chars)",
+          "approval_duration": "e.g. 12 months or null",
+          "exclusions": "string or null",
+          "age_restrictions": "string or null"
         }
       ]
     }
@@ -60,12 +69,11 @@ Return this exact JSON format:
 }
 
 DOCUMENT TEXT:
-${pdfText}`
+${text}`
 
   const result = await callGemini(prompt)
 
   try {
-    // Remove any markdown backticks if present
     let cleaned = result.trim()
     if (cleaned.startsWith('```')) {
       cleaned = cleaned.replace(/^```json?\n?/, '').replace(/\n?```$/, '')
