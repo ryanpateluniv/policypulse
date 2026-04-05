@@ -26,23 +26,6 @@ function getStatusInfo(entry: any) {
   return COLORS.not_addressed;
 }
 
-const MOCK_DRUGS = [
-  { id: "d1", brand_name: "Keytruda", generic_name: "pembrolizumab", drug_class: "Monoclonal Antibody" },
-  { id: "d2", brand_name: "Humira", generic_name: "adalimumab", drug_class: "TNF Inhibitor" },
-  { id: "d3", brand_name: "Opdivo", generic_name: "nivolumab", drug_class: "Monoclonal Antibody" }
-];
-
-const MOCK_COVERAGE: any = {
-  "d1": [
-    { indication: "Melanoma", payers: { name: "Aetna" }, coverage_status: "covered", is_preferred: true, prior_auth_required: false, step_therapy_required: false },
-    { indication: "NSCLC", payers: { name: "UnitedHealthcare" }, coverage_status: "covered_with_pa", is_preferred: true, prior_auth_required: true, step_therapy_required: true, step_therapy_drugs: ["Chemotherapy"], approval_duration: "12 months", clinical_criteria: "Patient must have failed at least one prior systemic therapy." },
-    { indication: "Head & Neck Cancer", payers: { name: "Cigna" }, coverage_status: "not_covered" },
-  ],
-  "d2": [
-    { indication: "Rheumatoid Arthritis", payers: { name: "UnitedHealthcare" }, coverage_status: "covered", is_preferred: true },
-    { indication: "Crohn's Disease", payers: { name: "Aetna" }, coverage_status: "step_therapy", step_therapy_required: true, step_therapy_drugs: ["Methotrexate"] }
-  ]
-};
 
 
 function DetailPanel({ entry, onClose }: any) {
@@ -132,7 +115,7 @@ export default function CoverageGrid() {
   const [hoveredCell, setHoveredCell] = useState<string | null>(null);
   const [selectedEntry, setSelectedEntry] = useState<any>(null);
   const searchRef = useRef<HTMLInputElement>(null);
-  const USE_API = false;
+  const USE_API = true;
 
   useEffect(() => {
     if (search.length < 2) { setSuggestions([]); return; }
