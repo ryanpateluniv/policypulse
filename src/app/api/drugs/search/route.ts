@@ -4,14 +4,13 @@ import { supabase } from '@/lib/supabase'
 export async function GET(request: NextRequest) {
   const q = request.nextUrl.searchParams.get('q')
 
-  if (!q) {
-    return NextResponse.json({ error: 'Missing query parameter q' }, { status: 400 })
+  let query = supabase.from('drugs').select('*')
+  
+  if (q) {
+    query = query.or(`brand_name.ilike.%${q}%,generic_name.ilike.%${q}%`)
   }
 
-  const { data, error } = await supabase
-    .from('drugs')
-    .select('*')
-    .or(`brand_name.ilike.%${q}%,generic_name.ilike.%${q}%`)
+  const { data, error } = await query
 
   if (error) {
     return NextResponse.json({ error: error.message }, { status: 500 })

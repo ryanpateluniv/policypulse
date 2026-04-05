@@ -115,15 +115,16 @@ export default function AIChatbot() {
                   borderRadius: m.role === "assistant" ? "0" : "24px 4px 24px 24px",
                   boxShadow: m.role === "assistant" ? "none" : "0 10px 30px rgba(0,0,0,0.03)",
                 }}>
-                  <p style={{ 
+                  <div style={{ 
                     margin: 0, 
                     fontSize: "1rem", 
                     lineHeight: 1.7, 
                     color: m.role === "assistant" ? "#0f172a" : "#1e293b",
-                    fontWeight: m.role === "assistant" ? 500 : 600 
+                    fontWeight: m.role === "assistant" ? 500 : 600,
+                    whiteSpace: "pre-wrap"
                   }}>
                     {m.content}
-                  </p>
+                  </div>
                 </div>
               </div>
             ))}

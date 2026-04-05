@@ -10,8 +10,7 @@ export async function POST(request: NextRequest) {
   }
 
   // Search for relevant drugs mentioned in the question
-  const words = question.toLowerCase().split(/\s+/)
-  let query = supabase
+  const { data: coverageData, error } = await supabase
     .from('coverage_entries')
     .select(`
       indication, coverage_status, is_preferred, prior_auth_required,
@@ -20,9 +19,7 @@ export async function POST(request: NextRequest) {
       payers (name),
       drugs (brand_name, generic_name)
     `)
-    .limit(80)
-
-  const { data: coverageData, error } = await query
+    .limit(250) // Increased limit for better context
 
   if (error) {
     return NextResponse.json({ error: error.message }, { status: 500 })
@@ -41,11 +38,15 @@ export async function POST(request: NextRequest) {
     criteria: e.clinical_criteria,
   }))
 
-  const prompt = `You are PulseAI, a friendly medical policy assistant. Answer the user's question in plain conversational English. Be concise — 2-4 sentences max unless they ask for detail. No markdown, no bullet points, no numbered lists, no policy IDs, no asterisks. Just talk naturally like a knowledgeable colleague.
+  const prompt = `You are PulseAI, a sophisticated medical policy analysis AI. Your goal is to help users understand complex drug coverage landscapes. Use the provided coverage data to answer questions accurately and professionally.
 
-If the question isn't about drug coverage or policies, still be helpful and friendly but let them know your specialty is drug policy analysis.
+GUIDELINES:
+- Provide clear, detailed answers using Markdown for readability.
+- Use tables or bullet points when comparing multiple payers or drugs.
+- If the data is empty or irrelevant, politely inform the user and offer to help with general drug policy knowledge.
+- Be precise about clinical criteria and step therapy requirements if they exist in the data.
 
-COVERAGE DATA:
+COVERAGE DATA FROM DATABASE:
 ${JSON.stringify(simplified)}
 
 USER QUESTION: ${question}`

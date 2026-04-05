@@ -19,7 +19,6 @@ function normalizeIndication(name: string): string {
   const mappings: Record<string, string> = {
     "rheumatoid arthritis": "Rheumatoid Arthritis",
     "crohn's disease": "Crohn's Disease",
-    "crohn's disease": "Crohn's Disease",
     "ulcerative colitis": "Ulcerative Colitis",
     "plaque psoriasis": "Plaque Psoriasis",
     "psoriatic arthritis": "Psoriatic Arthritis",
@@ -29,7 +28,6 @@ function normalizeIndication(name: string): string {
     "juvenile idiopathic arthritis": "Juvenile Idiopathic Arthritis",
     "articular juvenile idiopathic arthritis": "Juvenile Idiopathic Arthritis",
     "uveitis": "Uveitis",
-    "behcet's disease": "Behcet's Disease",
     "behcet's disease": "Behcet's Disease",
     "pyoderma gangrenosum": "Pyoderma Gangrenosum",
     "sarcoidosis": "Sarcoidosis",

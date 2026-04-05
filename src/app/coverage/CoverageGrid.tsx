@@ -24,8 +24,35 @@ function getStatusInfo(entry: any) {
   if (entry.coverage_status === "covered_with_pa") return COLORS.covered_with_pa;
   if (entry.coverage_status === "covered") return COLORS.covered;
   return COLORS.not_addressed;
-}
+}const MOCK_DRUGS = [
+  { id: "d1", brand_name: "Keytruda", generic_name: "pembrolizumab", drug_class: "Monoclonal Antibody" },
+  { id: "d2", brand_name: "Humira", generic_name: "adalimumab", drug_class: "TNF Inhibitor" },
+  { id: "d3", brand_name: "Opdivo", generic_name: "nivolumab", drug_class: "Monoclonal Antibody" },
+  { id: "d4", brand_name: "Tecentriq", generic_name: "atezolizumab", drug_class: "Monoclonal Antibody" },
+  { id: "d5", brand_name: "Libtayo", generic_name: "cemiplimab", drug_class: "Monoclonal Antibody" },
+  { id: "d6", brand_name: "Skyrizi", generic_name: "risankizumab", drug_class: "IL-23 Inhibitor" },
+  { id: "d7", brand_name: "Stelara", generic_name: "ustekinumab", drug_class: "IL-12/23 Inhibitor" }
+];
 
+const MOCK_COVERAGE: any = {
+  "d1": [
+    { indication: "Melanoma", payers: { name: "Aetna" }, coverage_status: "covered", is_preferred: true },
+    { indication: "NSCLC", payers: { name: "UnitedHealthcare" }, coverage_status: "covered_with_pa", is_preferred: true, prior_auth_required: true, step_therapy_required: true, clinical_criteria: "Failed one prior systemic therapy." },
+    { indication: "Head & Neck Cancer", payers: { name: "Cigna" }, coverage_status: "not_covered" },
+    { indication: "Breast Cancer (TNBC)", payers: { name: "Aetna Medicare" }, coverage_status: "covered", is_preferred: true },
+    { indication: "Renal Cell Carcinoma", payers: { name: "UnitedHealthcare Community Plan" }, coverage_status: "covered_with_pa", prior_auth_required: true }
+  ],
+  "d2": [
+    { indication: "Rheumatoid Arthritis", payers: { name: "UnitedHealthcare" }, coverage_status: "covered", is_preferred: true },
+    { indication: "Crohn's Disease", payers: { name: "Aetna" }, coverage_status: "step_therapy", step_therapy_required: true, step_therapy_drugs: ["Methotrexate"] },
+    { indication: "Psoriatic Arthritis", payers: { name: "Cigna" }, coverage_status: "covered", is_preferred: true }
+  ],
+  "d3": [
+    { indication: "Melanoma", payers: { name: "UnitedHealthcare" }, coverage_status: "covered", is_preferred: true },
+    { indication: "NSCLC", payers: { name: "Aetna" }, coverage_status: "covered_with_pa", prior_auth_required: true },
+    { indication: "Hodgkin Lymphoma", payers: { name: "Cigna" }, coverage_status: "covered" }
+  ]
+};
 
 
 function DetailPanel({ entry, onClose }: any) {
@@ -118,7 +145,6 @@ export default function CoverageGrid() {
   const USE_API = true;
 
   useEffect(() => {
-    if (search.length < 2) { setSuggestions([]); return; }
     const timer = setTimeout(async () => {
       if (USE_API) {
         try {
@@ -127,7 +153,10 @@ export default function CoverageGrid() {
           setSuggestions(data);
         } catch { setSuggestions([]); }
       } else {
-        setSuggestions(MOCK_DRUGS.filter(d => d.brand_name.toLowerCase().includes(search.toLowerCase()) || d.generic_name.toLowerCase().includes(search.toLowerCase())));
+        const filtered = search.length < 1 
+          ? MOCK_DRUGS 
+          : MOCK_DRUGS.filter(d => d.brand_name.toLowerCase().includes(search.toLowerCase()) || d.generic_name.toLowerCase().includes(search.toLowerCase()));
+        setSuggestions(filtered);
       }
     }, 200);
     return () => clearTimeout(timer);
