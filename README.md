@@ -214,6 +214,15 @@ Real, publicly available policy documents from major US health insurers:
 
 ## 👥 Team
 
+
+| Name | Email | Role |
+|------|-------|------|
+| **Ryan Vinod Patel** | rpate285@asu.edu | AI/Backend Lead |
+| **Jaineel Kairav Shah** | jshah129@asu.edu | Frontend Lead |
+| **Rishi Prasad Vagu** | rvagu@asu.edu | Integration Lead |
+| **Hetarth Pragnesh Patel** | hpate254@asu.edu | Data & Demo Lead |
+
+
 Built in 48 hours at **Innovation Hacks 2.0** by a team of 4 using Claude AI as our coding co-pilot.
 
 ---
