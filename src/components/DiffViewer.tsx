@@ -62,7 +62,11 @@ export default function PolicyDiffViewer() {
         .eq("drug_id", selectedDrug);
       if (data) {
         const seen = new Set();
-        const uniqueDocs = data.filter((d: any) => {
+        const uniqueDocs = data.map((d: any) => ({
+          ...d,
+          payers: Array.isArray(d.payers) ? d.payers[0] : d.payers,
+          policy_documents: Array.isArray(d.policy_documents) ? d.policy_documents[0] : d.policy_documents,
+        })).filter((d: any) => {
           if (seen.has(d.policy_document_id)) return false;
           seen.add(d.policy_document_id);
           return true;
@@ -90,8 +94,18 @@ export default function PolicyDiffViewer() {
       supabase.from("coverage_entries").select("indication, coverage_status, is_preferred, prior_auth_required, step_therapy_required, step_therapy_drugs, clinical_criteria, approval_duration, exclusions, payers(name), drugs(brand_name, generic_name)").eq("drug_id", selectedDrug).eq("policy_document_id", doc2),
     ]);
 
-    const d1 = (res1.data || []) as CoverageEntry[];
-    const d2 = (res2.data || []) as CoverageEntry[];
+    const d1 = (res1.data || []).map((e: any) => ({
+      ...e,
+      payers: Array.isArray(e.payers) ? e.payers[0] : e.payers,
+      drugs: Array.isArray(e.drugs) ? e.drugs[0] : e.drugs
+    })) as CoverageEntry[];
+    
+    const d2 = (res2.data || []).map((e: any) => ({
+      ...e,
+      payers: Array.isArray(e.payers) ? e.payers[0] : e.payers,
+      drugs: Array.isArray(e.drugs) ? e.drugs[0] : e.drugs
+    })) as CoverageEntry[];
+
     setP1Data(d1);
     setP2Data(d2);
 
@@ -243,7 +257,7 @@ export default function PolicyDiffViewer() {
                         <td style={{ padding: "14px 24px", borderBottom: "1px solid #f1f5f9", textAlign: "center" }}>
                           <div style={{ display: "inline-flex", flexDirection: "column", alignItems: "center", gap: "4px" }}>
                             <span style={{ background: s1.bg, color: s1.text, padding: "4px 14px", borderRadius: "100px", fontSize: "0.75rem", fontWeight: 700 }}>{s1.label}</span>
-                            {e1?.step_therapy_drugs?.length > 0 && (
+                            {e1?.step_therapy_drugs && e1.step_therapy_drugs.length > 0 && (
                               <span style={{ fontSize: "0.7rem", color: "#9a3412" }}>Try: {e1.step_therapy_drugs.join(", ").substring(0, 40)}</span>
                             )}
                           </div>
@@ -254,7 +268,7 @@ export default function PolicyDiffViewer() {
                         <td style={{ padding: "14px 24px", borderBottom: "1px solid #f1f5f9", textAlign: "center" }}>
                           <div style={{ display: "inline-flex", flexDirection: "column", alignItems: "center", gap: "4px" }}>
                             <span style={{ background: s2.bg, color: s2.text, padding: "4px 14px", borderRadius: "100px", fontSize: "0.75rem", fontWeight: 700 }}>{s2.label}</span>
-                            {e2?.step_therapy_drugs?.length > 0 && (
+                            {e2?.step_therapy_drugs && e2.step_therapy_drugs.length > 0 && (
                               <span style={{ fontSize: "0.7rem", color: "#9a3412" }}>Try: {e2.step_therapy_drugs.join(", ").substring(0, 40)}</span>
                             )}
                           </div>
