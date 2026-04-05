@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { HeartPulse, ChevronDown, Search, LayoutGrid, Box, Moon, LogIn, LogOut, Sparkles, FileText, Pill, Database, Building2, Clock, Plus, Upload, ArrowRight } from "lucide-react";
+import { HeartPulse, ChevronDown, Search, LayoutGrid, Box, Moon, LogIn, LogOut, Sparkles, FileText, Pill, Database, Building2, Clock, Plus, Upload, ArrowRight, CheckCircle2, Activity, Calendar, ClipboardList, LayoutList } from "lucide-react";
 import { useUser } from "@auth0/nextjs-auth0";
 
 const hour = new Date().getHours();
@@ -351,49 +351,50 @@ export default function PolicyPulse() {
                 })}
               </p>
 
-              <h1
-                style={{
-                  fontSize: "clamp(1.5rem, 5vw, 2.2rem)",
-                  fontWeight: 700,
-                  letterSpacing: "-0.04em",
-                  marginLeft: "-4px"
-                }}
-              >
-                {greeting}, {user?.given_name || user?.name || "Developers"}.
-              </h1>
-            </section>
+              <div style={{ display: "flex", flexWrap: "wrap", alignItems: "flex-end", justifyContent: "space-between", gap: "2rem", marginTop: "-0.5rem" }}>
+                <h1
+                  style={{
+                    fontSize: "clamp(1.5rem, 5vw, 2.2rem)",
+                    fontWeight: 700,
+                    letterSpacing: "-0.04em",
+                    marginLeft: "-4px"
+                  }}
+                >
+                  {greeting}, {user?.given_name || user?.name || "Developers"}.
+                </h1>
 
-            {/* Dashboard Metrics - Compact Card */}
-            <section
-              style={{
-                display: "grid",
-                gridTemplateColumns: "repeat(auto-fit, minmax(140px, 1fr))",
-                gap: "1.5rem",
-                marginTop: "2.5rem",
-                padding: "2rem",
-                background: "#f9fafb",
-                borderRadius: "16px",
-                border: "1px solid #f3f4f6",
-              }}
-            >
-              {[
-                { label: "Parsed", value: "1,284", icon: <FileText size={16} color="#0057ff" /> },
-                { label: "Drugs", value: "482", icon: <Pill size={16} color="#00b87a" /> },
-                { label: "Entries", value: "12.4k", icon: <Database size={16} color="#7c3aed" /> },
-                { label: "Payers", value: "94", icon: <Building2 size={16} color="#ea580c" /> },
-              ].map((stat, i) => (
-                <div key={i} style={{ display: "flex", flexDirection: "column", gap: "0.25rem" }}>
+                {/* Unified Header Metrics Pill */}
+                <div
+                  style={{
+                    display: "inline-flex",
+                    alignItems: "center",
+                    gap: "24px",
+                    padding: "10px 20px",
+                    background: "#f9fafb",
+                    borderRadius: "100px",
+                    border: "1px solid #f1f5f9",
+                  }}
+                >
                   <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-                    {stat.icon}
-                    <span style={{ fontSize: "0.7rem", fontWeight: 700, color: "#9ca3af", textTransform: "uppercase", letterSpacing: "0.05em" }}>
-                      {stat.label}
-                    </span>
+                    <Clock size={16} color="#6b7280" />
+                    <span style={{ fontSize: "0.8rem", fontWeight: 700, color: "#111" }}>12.4 hrs</span>
+                    <span style={{ fontSize: "0.8rem", color: "#6b7280" }}>Saved</span>
                   </div>
-                  <div style={{ fontSize: "1.25rem", fontWeight: 700, color: "#111" }}>{stat.value}</div>
+                  <div style={{ height: "16px", width: "1px", background: "#e5e7eb" }} />
+                  <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+                    <CheckCircle2 size={16} color="#10b981" />
+                    <span style={{ fontSize: "0.8rem", fontWeight: 700, color: "#111" }}>284</span>
+                    <span style={{ fontSize: "0.8rem", color: "#6b7280" }}>Policies</span>
+                  </div>
+                  <div style={{ height: "16px", width: "1px", background: "#e5e7eb" }} />
+                  <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+                    <Activity size={16} color="#3b82f6" />
+                    <span style={{ fontSize: "0.8rem", fontWeight: 700, color: "#111" }}>12</span>
+                    <span style={{ fontSize: "0.8rem", color: "#6b7280" }}>Live</span>
+                  </div>
                 </div>
-              ))}
+              </div>
             </section>
-
           </>
         ) : activeTab === "vault" ? (
           <section>
