@@ -1,12 +1,14 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
-import { LayoutGrid, Box, Moon, LayoutList } from "lucide-react";
+import { LayoutGrid, Box, GitCompare, LayoutList, MessageSquare } from "lucide-react";
 import { useUser } from "@auth0/nextjs-auth0";
 import CoverageGrid from "@/components/CoverageGrid";
 import DashboardOverview from "@/components/DashboardOverview";
 import PolicyVault from "@/app/policyvault/PolicyVault";
 import MainHeader from "@/components/MainHeader";
+import DiffViewer from "@/components/DiffViewer";
+import AIChatbot from "@/components/AIChatbot";
 
 export default function PolicyPulse() {
   const [activeTab, setActiveTab] = useState("dashboard");
@@ -14,7 +16,8 @@ export default function PolicyPulse() {
   const [showSuggestions, setShowSuggestions] = useState(false);
   const [uploadedDocs, setUploadedDocs] = useState([
     { name: "Aetna Oncology Policy 2024.pdf", size: "2.4 MB", date: "2h ago", status: "Analyzed" },
-    { name: "Cigna NSCLC Criteria.pdf", size: "1.1 MB", date: "5h ago", status: "Analyzed" }
+    { name: "Cigna NSCLC Criteria.pdf", size: "1.1 MB", date: "5h ago", status: "Analyzed" },
+    { name: "UHC Medical Policy Q1.pdf", size: "3.2 MB", date: "Yesterday", status: "Analyzed" }
   ]);
   const [selectedDoc, setSelectedDoc] = useState<any>(null);
   const searchInputRef = useRef<HTMLInputElement>(null);
@@ -32,10 +35,11 @@ export default function PolicyPulse() {
   }, []);
 
   const commands = [
-    { key: "/dashboard", label: "Go to Dashboard", icon: <LayoutGrid size={16} />, action: () => setActiveTab("dashboard") },
-    { key: "/vault", label: "Go to Vault", icon: <Box size={16} />, action: () => setActiveTab("vault") },
-    { key: "/coverage", label: "Drug Coverage Analysis", icon: <LayoutList size={16} />, action: () => setActiveTab("coverage") },
-    { key: "/settings", label: "Open Settings", icon: <Moon size={16} />, action: () => setActiveTab("settings") },
+    { key: "/grid", label: "Dashboard Grid", icon: <LayoutGrid size={16} />, action: () => setActiveTab("dashboard") },
+    { key: "/vault", label: "Policy Vault", icon: <Box size={16} />, action: () => setActiveTab("vault") },
+    { key: "/payer", label: "Payer Coverage", icon: <LayoutList size={16} />, action: () => setActiveTab("coverage") },
+    { key: "/diff", label: "Policy Difference", icon: <GitCompare size={16} />, action: () => setActiveTab("diff") },
+    { key: "/ai", label: "Ask PulseAI", icon: <MessageSquare size={16} />, action: () => setActiveTab("pulseai") },
   ];
 
   const hour = new Date().getHours();
@@ -56,7 +60,7 @@ export default function PolicyPulse() {
         isLoading={isLoading}
       />
 
-      <main className="px-4 sm:px-10 pb-10 pt-6">
+      <main className={activeTab === "pulseai" ? "" : "px-4 sm:px-10 pb-10 pt-6"}>
         {activeTab === "dashboard" ? (
           <DashboardOverview user={user} greeting={greeting} setActiveTab={setActiveTab} />
         ) : activeTab === "coverage" ? (
@@ -68,10 +72,14 @@ export default function PolicyPulse() {
             selectedDoc={selectedDoc}
             setSelectedDoc={setSelectedDoc}
           />
+        ) : activeTab === "diff" ? (
+          <DiffViewer documents={uploadedDocs} />
+        ) : activeTab === "pulseai" ? (
+          <AIChatbot />
         ) : (
           <section className="py-20 text-center">
-            <h2 className="text-2xl font-bold">Settings & Configuration</h2>
-            <p className="text-gray-500 mt-2">Personalize your PulseAI experience.</p>
+            <h2 className="text-2xl font-bold">404</h2>
+            <p className="text-gray-500 mt-2">Section not found.</p>
           </section>
         )}
       </main>

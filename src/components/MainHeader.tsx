@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { HeartPulse, Sparkles, LayoutGrid, Box, LayoutList, Moon } from "lucide-react";
+import { HeartPulse, Sparkles, LayoutGrid, Box, LayoutList, GitCompare, MessageSquare, Menu } from "lucide-react";
 
 interface MainHeaderProps {
   activeTab: string;
@@ -32,39 +32,44 @@ export default function MainHeader({
     <header
       style={{
         top: 0,
-        padding: "0 2rem",
-        height: "64px",
+        padding: "0 1.5rem",
+        height: "72px",
         display: "flex",
         alignItems: "center",
-        background: "#ffffff",
-        borderBottom: "1px solid #f3f4f6",
+        background: "rgba(255, 255, 255, 0.8)",
+        backdropFilter: "blur(20px)",
+        borderBottom: "1px solid #f1f5f9",
         justifyContent: "space-between",
         position: "sticky",
-        zIndex: 50
+        zIndex: 100,
+        gap: "1rem"
       }}
     >
       {/* Left side: Logo */}
-      <div style={{ display: "flex", alignItems: "center", flex: 1 }}>
-        <div style={{ display: "flex", alignItems: "center", gap: "1rem" }}>
-          <div style={{ background: "#084d38", borderRadius: "10px", padding: "8px", display: "flex", alignItems: "center", justifyContent: "center" }}>
-            <HeartPulse strokeWidth={2} size={24} color="#ffffff" />
+      <div style={{ display: "flex", alignItems: "center", flexShrink: 0 }}>
+        <div style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
+          <div style={{ background: "#084d38", borderRadius: "12px", padding: "10px", display: "flex", alignItems: "center", justifyContent: "center", boxShadow: "0 4px 12px rgba(8, 77, 56, 0.2)" }}>
+            <HeartPulse strokeWidth={2.5} size={22} color="#ffffff" />
           </div>
-          <span style={{ fontWeight: 600, fontSize: "1.1rem", color: "#111", letterSpacing: "-0.01em" }}>PolicyPulse</span>
-        </div>
-        <div style={{ marginLeft: "1rem", background: "#ffffff", color: "#111111", padding: "2px 8px", borderRadius: "20px", fontSize: "0.6rem", fontWeight: 800, textTransform: "uppercase", letterSpacing: "0.08em", border: "1.5px solid #000000", display: "flex", alignItems: "center", gap: "4px", height: "18px" }}>
-          v0.1 <span style={{ fontWeight: 400, opacity: 0.6 }}>Alpha</span>
+          <span className="hidden sm:inline" style={{ fontWeight: 800, fontSize: "1.2rem", color: "#0f172a", letterSpacing: "-0.03em" }}>PolicyPulse</span>
         </div>
       </div>
 
-      {/* Center: Search Bar */}
-      <div style={{ justifyContent: "center", flex: 1, padding: "0 1rem", position: "relative" }} className="hidden md:flex">
-        <div className="flex items-center justify-between bg-gradient-to-r from-white to-[#f9fafb] rounded-[12px] px-[1.2rem] py-[0.6rem] w-full max-w-[560px] border border-[#e5e7eb] transition-all duration-300 hover:border-[#00b87a]/40 hover:shadow-sm focus-within:border-[#00b87a] focus-within:bg-white focus-within:ring-4 focus-within:ring-[#00b87a]/15 focus-within:max-w-[580px] group relative">
+      {/* Center: Search Bar - Responsive Squeeze */}
+      <div style={{ flex: 1, maxWidth: "600px", position: "relative" }} className="flex justify-center">
+        <div 
+          className="flex items-center justify-between bg-[#f8fafc] rounded-[16px] px-[1.2rem] py-[0.7rem] w-full border border-transparent transition-all duration-300 hover:border-[#084d38]/20 focus-within:border-[#084d38] focus-within:bg-white focus-within:shadow-[0_0_20px_rgba(8,77,56,0.05)] group relative"
+          style={{ 
+            minWidth: "120px",
+            height: "44px"
+          }}
+        >
           <div style={{ display: "flex", alignItems: "center", gap: "10px", flex: 1 }}>
-            <Sparkles size={18} className="text-[#00b87a] transition-transform duration-300 group-focus-within:scale-110" />
+            <Sparkles size={16} className="text-[#084d38] opacity-50 group-focus-within:opacity-100 transition-opacity" />
             <input
               ref={searchInputRef}
               type="text"
-              placeholder="Ask PulseAI..."
+              placeholder="PulseAI Search..."
               value={searchValue}
               onChange={(e) => {
                 setSearchValue(e.target.value);
@@ -82,32 +87,35 @@ export default function MainHeader({
               }}
               onFocus={() => setShowSuggestions(searchValue.startsWith("/"))}
               onBlur={() => setTimeout(() => setShowSuggestions(false), 200)}
-              style={{ background: "transparent", border: "none", outline: "none", width: "100%", fontSize: "0.95rem", color: "#111", fontFamily: '"Inter", sans-serif' }}
+              style={{ 
+                background: "transparent", 
+                border: "none", 
+                outline: "none", 
+                width: "100%", 
+                fontSize: "0.9rem", 
+                color: "#1e293b", 
+                fontWeight: 500,
+                fontFamily: '"Inter", sans-serif' 
+              }}
             />
           </div>
 
-          {searchValue === "" && (
-            <div style={{ background: "#ffffff", color: "#9ca3af", height: "22px", minWidth: "22px", display: "flex", alignItems: "center", justifyContent: "center", borderRadius: "6px", fontSize: "0.75rem", fontWeight: 600, border: "1px solid #e5e7eb", boxShadow: "0 1px 1px rgba(0,0,0,0.05)", pointerEvents: "none", transition: "opacity 0.2s, transform 0.2s" }} className="group-focus-within:opacity-0 group-focus-within:scale-95">/</div>
-          )}
+          <div style={{ background: "#ffffff", color: "#94a3b8", height: "18px", width: "18px", display: "flex", alignItems: "center", justifyContent: "center", borderRadius: "4px", fontSize: "0.65rem", fontWeight: 800, border: "1px solid #e2e8f0", pointerEvents: "none" }} className="hidden sm:flex">/</div>
 
-          {showSuggestions && searchValue.startsWith("/") && (
-            <div style={{ position: "absolute", top: "calc(100% + 8px)", left: 0, width: "100%", background: "white", border: "1px solid #e5e7eb", borderRadius: "12px", boxShadow: "0 10px 25px -5px rgba(0,0,0,0.1)", padding: "8px", zIndex: 100 }}>
-              <div style={{ color: "#9ca3af", fontSize: "0.75rem", fontWeight: 700, padding: "8px 12px", textTransform: "uppercase", letterSpacing: "0.05em", borderBottom: "1px solid #f9fafb", marginBottom: "4px" }}>Navigation Commands</div>
-              {commands.filter(c => c.key.startsWith(searchValue.toLowerCase())).map((cmd) => (
-                <button
-                  key={cmd.key}
-                  onClick={() => {
-                    cmd.action();
-                    setSearchValue("");
-                    setShowSuggestions(false);
-                  }}
-                  style={{ display: "flex", alignItems: "center", gap: "12px", width: "100%", padding: "10px 12px", border: "none", background: "transparent", borderRadius: "8px", cursor: "pointer", textAlign: "left", color: "#374151", transition: "background 0.2s" }}
-                  onMouseOver={(e) => (e.currentTarget.style.background = "#f9fafb")}
+          {showSuggestions && (
+            <div style={{ position: "absolute", top: "calc(100% + 12px)", left: 0, right: 0, background: "white", border: "1px solid #f1f5f9", borderRadius: "16px", boxShadow: "0 20px 40px rgba(0,0,0,0.1)", padding: "8px", zIndex: 110, animation: "fadeInUp 0.2s ease-out" }}>
+              <div style={{ color: "#94a3b8", fontSize: "0.7rem", fontWeight: 800, padding: "8px 12px", textTransform: "uppercase", letterSpacing: "0.08em" }}>Navigation</div>
+              {commands.filter(c => c.key.includes(searchValue.toLowerCase())).map((cmd) => (
+                <button 
+                  key={cmd.key} 
+                  onClick={cmd.action}
+                  style={{ display: "flex", alignItems: "center", gap: "12px", width: "100%", padding: "10px 12px", border: "none", background: "transparent", borderRadius: "10px", cursor: "pointer", transition: "all 0.2s" }}
+                  onMouseOver={(e) => (e.currentTarget.style.background = "#f8fafc")}
                   onMouseOut={(e) => (e.currentTarget.style.background = "transparent")}
                 >
                   <div style={{ color: "#084d38", background: "#f0fdf4", padding: "6px", borderRadius: "8px" }}>{cmd.icon}</div>
-                  <span style={{ fontWeight: 600, fontSize: "0.9rem", flex: 1 }}>{cmd.label}</span>
-                  <span style={{ color: "#9ca3af", fontSize: "0.75rem", background: "#f9fafb", padding: "2px 6px", borderRadius: "4px" }}>{cmd.key}</span>
+                  <span style={{ fontWeight: 600, fontSize: "0.9rem", color: "#1e293b", flex: 1 }}>{cmd.label}</span>
+                  <span style={{ color: "#94a3b8", fontSize: "0.7rem", fontWeight: 700 }}>{cmd.key}</span>
                 </button>
               ))}
             </div>
@@ -115,46 +123,86 @@ export default function MainHeader({
         </div>
       </div>
 
-      {/* Right side items */}
-      <div style={{ display: "flex", alignItems: "center", justifyContent: "flex-end", gap: "0.75rem", flex: 1 }}>
-        <div style={{ width: "1px", height: "24px", background: "#e5e7eb", marginRight: "0.5rem" }} />
+      {/* Right side items - Responsive visibility */}
+      <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", flexShrink: 0 }}>
+        <div style={{ display: "flex", gap: "2px" }} className="hidden lg:flex">
+          {[
+            { id: "dashboard", icon: <LayoutGrid size={18} />, label: "Dashboard" },
+            { id: "vault", icon: <Box size={18} />, label: "Vault" },
+            { id: "coverage", icon: <LayoutList size={18} />, label: "Payer" },
+            { id: "diff", icon: <GitCompare size={18} />, label: "Difference" },
+            { id: "pulseai", icon: <MessageSquare size={18} />, label: "PulseAI" }
+          ].map((tab, i) => (
+            <React.Fragment key={tab.id}>
+              {i > 0 && <div style={{ alignSelf: "center", width: "1px", height: "16px", background: "#e2e8f0", margin: "0 4px" }} />}
+              <button
+                onClick={() => setActiveTab(tab.id)}
+                style={{
+                  background: activeTab === tab.id ? "#f1f5f9" : "transparent",
+                  border: "none",
+                  cursor: "pointer",
+                  color: activeTab === tab.id ? "#0f172a" : "#64748b",
+                  padding: "8px 12px",
+                  borderRadius: "10px",
+                  display: "flex",
+                  alignItems: "center",
+                  gap: "8px",
+                  transition: "all 0.2s cubic-bezier(0.4, 0, 0.2, 1)",
+                  fontWeight: 600,
+                  fontSize: "0.85rem"
+                }}
+                onMouseOver={(e) => !activeTab.includes(tab.id) && (e.currentTarget.style.background = "#f8fafc")}
+                onMouseOut={(e) => activeTab !== tab.id && (e.currentTarget.style.background = "transparent")}
+              >
+                {tab.icon}
+                <span className="hidden xl:inline">{tab.label}</span>
+              </button>
+            </React.Fragment>
+          ))}
+        </div>
 
-        {[
-          { id: "dashboard", icon: <LayoutGrid size={20} />, label: "Dashboard" },
-          { id: "vault", icon: <Box size={20} />, label: "Vault" },
-          { id: "coverage", icon: <LayoutList size={20} />, label: "Coverage" },
-          { id: "settings", icon: <Moon size={20} />, label: "Settings" }
-        ].map((tab) => (
-          <button
-            key={tab.id}
-            onClick={() => setActiveTab(tab.id)}
-            style={{
-              background: activeTab === tab.id ? "#f3f4f6" : "none",
-              border: "none",
-              cursor: "pointer",
-              color: activeTab === tab.id ? "#111" : "#6b7280",
-              padding: activeTab === tab.id ? "8px 16px" : "8px",
-              borderRadius: "12px",
-              display: "flex",
-              alignItems: "center",
-              gap: "10px",
-              transition: "all 0.2s ease",
-            }}
-          >
-            {tab.icon}
-            {activeTab === tab.id && <span style={{ fontWeight: 500, fontSize: "0.95rem" }}>{tab.label}</span>}
-          </button>
-        ))}
+        {/* Mobile Menu Icon */}
+        <button className="lg:hidden" style={{ background: "#f8fafc", border: "1px solid #f1f5f9", padding: "8px", borderRadius: "10px", color: "#64748b" }}>
+          <Menu size={20} />
+        </button>
 
-        {/* User Avatar */}
+        <div style={{ width: "1px", height: "24px", background: "#f1f5f9", margin: "0 8px" }} className="hidden sm:block" />
+
+        {/* User Card */}
         {!isLoading && user ? (
-          <a href="/auth/logout" style={{ textDecoration: "none", width: "36px", height: "36px", borderRadius: "50%", background: "#f3f4f6", backgroundSize: "cover", backgroundImage: user?.picture ? `url(${user.picture})` : "none", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "0.85rem", fontWeight: 700, color: "#374151", border: "1px solid #e5e7eb", cursor: "pointer" }}>
-            {!user?.picture && user?.name?.charAt(0)}
-          </a>
+          <div style={{ display: "flex", alignItems: "center", gap: "10px", padding: "4px", paddingRight: "12px", background: "#f8fafc", borderRadius: "100px", border: "1px solid #f1f5f9" }}>
+            <a href="/auth/logout" style={{ 
+              textDecoration: "none", 
+              width: "32px", 
+              height: "32px", 
+              borderRadius: "50%", 
+              background: "#084d38", 
+              backgroundSize: "cover", 
+              backgroundImage: user?.picture ? `url(${user.picture})` : "none", 
+              display: "flex", 
+              alignItems: "center", 
+              justifyContent: "center", 
+              fontSize: "0.75rem", 
+              fontWeight: 800, 
+              color: "white", 
+              cursor: "pointer",
+              boxShadow: "0 2px 8px rgba(8, 77, 56, 0.2)"
+            }}>
+              {!user?.picture && user?.name?.charAt(0)}
+            </a>
+            <span style={{ fontSize: "0.85rem", fontWeight: 700, color: "#1e293b" }} className="hidden md:inline">{user?.given_name || user?.name?.split(' ')[0]}</span>
+          </div>
         ) : (
-          <a href="/auth/login" style={{ textDecoration: "none", background: "#084d38", color: "white", padding: "8px 20px", borderRadius: "10px", fontSize: "0.9rem", fontWeight: 500 }}>Sign In</a>
+          <a href="/auth/login" style={{ textDecoration: "none", background: "#084d38", color: "white", padding: "10px 20px", borderRadius: "12px", fontSize: "0.9rem", fontWeight: 600, boxShadow: "0 4px 12px rgba(8, 77, 56, 0.2)" }}>Sign In</a>
         )}
       </div>
+
+      <style>{`
+        @keyframes fadeInUp {
+          from { opacity: 0; transform: translateY(10px); }
+          to { opacity: 1; transform: translateY(0); }
+        }
+      `}</style>
     </header>
   );
 }
