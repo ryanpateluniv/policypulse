@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { HeartPulse, ChevronDown, Search, LayoutGrid, Box, Moon, LogIn, LogOut, Sparkles, FileText, Pill, Database, Building2, Clock, Plus, Upload, ArrowRight, CheckCircle2, Activity, Calendar, ClipboardList, LayoutList, TrendingUp, AlertCircle, ShieldCheck } from "lucide-react";
+import { HeartPulse, ChevronDown, Search, LayoutGrid, Box, Moon, LogIn, LogOut, Sparkles, FileText, Pill, Database, Building2, Clock, Plus, Upload, ArrowRight, CheckCircle2, Activity, Calendar, ClipboardList, LayoutList, TrendingUp, AlertCircle, ShieldCheck, Download } from "lucide-react";
 import { useUser } from "@auth0/nextjs-auth0";
 import CoverageGrid from "@/components/CoverageGrid";
 
@@ -22,6 +22,11 @@ export default function PolicyPulse() {
   const [activeTab, setActiveTab] = useState("dashboard");
   const [searchValue, setSearchValue] = useState("");
   const [showSuggestions, setShowSuggestions] = useState(false);
+  const [uploadedDocs, setUploadedDocs] = useState([
+    { name: "Aetna Oncology Policy 2024.pdf", size: "2.4 MB", date: "2h ago", status: "Analyzed" },
+    { name: "Cigna NSCLC Criteria.pdf", size: "1.1 MB", date: "5h ago", status: "Analyzed" }
+  ]);
+  const [selectedDoc, setSelectedDoc] = useState<any>(null);
   const { user, isLoading } = useUser();
 
   const commands = [
@@ -255,27 +260,6 @@ export default function PolicyPulse() {
           </button>
 
           <button
-            onClick={() => setActiveTab("coverage")}
-            style={{
-              background: activeTab === "coverage" ? "#f3f4f6" : "none",
-              border: "none",
-              cursor: "pointer",
-              color: activeTab === "coverage" ? "#111" : "#6b7280",
-              padding: activeTab === "coverage" ? "8px 16px" : "8px",
-              borderRadius: "12px",
-              display: "flex",
-              alignItems: "center",
-              gap: "10px",
-              transition: "all 0.2s ease",
-            }}
-          >
-            <LayoutList size={20} strokeWidth={2} />
-            {activeTab === "coverage" && (
-              <span style={{ fontWeight: 500, fontSize: "0.95rem" }}>Coverage</span>
-            )}
-          </button>
-
-          <button
             onClick={() => setActiveTab("settings")}
             style={{
               background: activeTab === "settings" ? "#f3f4f6" : "none",
@@ -474,7 +458,55 @@ export default function PolicyPulse() {
                 </div>
               </div>
 
-              {/* Card 2: Coverage Overview */}
+              {/* Card 2: Live Detection Stream */}
+              <div style={{
+                background: "white",
+                borderRadius: "24px",
+                padding: "1.5rem",
+                border: "1px solid #f1f5f9",
+                boxShadow: "0 4px 6px -1px rgba(0, 0, 0, 0.05)",
+                display: "flex",
+                flexDirection: "column"
+              }}>
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "1.5rem" }}>
+                  <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+                    <div style={{ width: "8px", height: "8px", borderRadius: "50%", background: "#ef4444", animation: "pulse 2s infinite" }} />
+                    <span style={{ fontWeight: 600, fontSize: "1.1rem" }}>Live Detection Feed</span>
+                  </div>
+                  <span style={{ fontSize: "0.75rem", background: "#fef2f2", color: "#ef4444", padding: "2px 8px", borderRadius: "100px", fontWeight: 700 }}>ACTIVE</span>
+                </div>
+                
+                <style>{`
+                  @keyframes pulse {
+                    0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7); }
+                    70% { transform: scale(1); box-shadow: 0 0 0 8px rgba(239, 68, 68, 0); }
+                    100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
+                  }
+                `}</style>
+
+                <div style={{ flex: 1, overflow: "hidden" }}>
+                  {[
+                    { drug: "Opdivo", type: "Policy Change", time: "Just now", status: "Parsing...", progress: 65 },
+                    { drug: "Stelara", type: "Payer Update", time: "1m ago", status: "Archiving", progress: 100 },
+                    { drug: "Dupixent", type: "New Indications", time: "4m ago", status: "Summarized", progress: 100 }
+                  ].map((item, i) => (
+                    <div key={i} style={{ display: "flex", flexDirection: "column", gap: "8px", paddingBottom: "1rem", marginBottom: "1rem", borderBottom: i < 2 ? "1px solid #f1f5f9" : "none" }}>
+                      <div style={{ display: "flex", justifyContent: "space-between", fontSize: "0.9rem" }}>
+                        <span style={{ fontWeight: 600 }}>{item.drug} &middot; {item.type}</span>
+                        <span style={{ fontSize: "0.75rem", color: "#9ca3af" }}>{item.time}</span>
+                      </div>
+                      <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
+                        <div style={{ flex: 1, height: "4px", background: "#f3f4f6", borderRadius: "2px", overflow: "hidden" }}>
+                          <div style={{ width: `${item.progress}%`, height: "100%", background: item.progress < 100 ? "#3b82f6" : "#10b981", borderRadius: "2px", transition: "width 0.5s ease" }} />
+                        </div>
+                        <span style={{ fontSize: "0.7rem", fontWeight: 700, color: item.progress < 100 ? "#3b82f6" : "#10b981", textTransform: "uppercase" }}>{item.status}</span>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Card 3: Coverage Overview */}
               <div style={{
                 background: "white",
                 borderRadius: "24px",
@@ -510,11 +542,11 @@ export default function PolicyPulse() {
                 </div>
               </div>
 
-              {/* Card 3: Recent Alerts */}
-              <div style={{
+              {/* Card 4: Recent Alerts */}
+              <div className="md:col-span-2" style={{
                 background: "white",
                 borderRadius: "24px",
-                padding: "1.5rem",
+                padding: "2rem",
                 border: "1px solid #f1f5f9",
                 boxShadow: "0 4px 6px -1px rgba(0, 0, 0, 0.05)"
               }}>
@@ -523,21 +555,27 @@ export default function PolicyPulse() {
                     <div style={{ background: "#fff1f2", padding: "8px", borderRadius: "10px" }}>
                       <AlertCircle size={20} color="#f43f5e" />
                     </div>
-                    <span style={{ fontWeight: 600, fontSize: "1rem" }}>Critical Changes</span>
+                    <span style={{ fontWeight: 600, fontSize: "1.2rem" }}>Critical Policy Changes Detected</span>
                   </div>
-                  <span style={{ fontSize: "0.8rem", color: "#6b7280" }}>Last 24h</span>
+                  <span style={{ fontSize: "0.85rem", color: "#6b7280" }}>PulseAI Monitoring • Last 24h</span>
                 </div>
-                <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                   {[
-                    { drug: "Keytruda", payer: "Cigna", change: "Step Therapy Added", date: "2h ago" },
-                    { drug: "Humira", payer: "Aetna", change: "Criteria Update", date: "5h ago" },
+                    { drug: "Keytruda", payer: "Cigna", change: "Step Therapy Added", description: "Cigna updated oncology protocols to require biosimilar trial first.", date: "2h ago", severity: "high" },
+                    { drug: "Humira", payer: "Aetna", change: "Criteria Update", description: "New clinical criteria for plaque psoriasis coverage effective immediately.", date: "5h ago", severity: "medium" },
+                    { drug: "Dupixent", payer: "UHC", change: "Payer coverage", description: "Coverage expanded to include EoE indications in adolescents.", date: "8h ago", severity: "low" },
                   ].map((alert, i) => (
-                    <div key={i} style={{ display: "flex", alignItems: "start", gap: "12px", paddingBottom: i === 0 ? "1rem" : 0, borderBottom: i === 0 ? "1px solid #f1f5f9" : "none" }}>
-                      <div style={{ flex: 1 }}>
-                        <p style={{ fontSize: "0.9rem", fontWeight: 600, color: "#111", margin: 0 }}>{alert.drug} &middot; {alert.payer}</p>
-                        <p style={{ fontSize: "0.8rem", color: "#f43f5e", margin: "2px 0 0" }}>{alert.change}</p>
+                    <div key={i} style={{ padding: "1.2rem", borderRadius: "16px", background: "#f8fafc", border: "1px solid #f1f5f9" }}>
+                      <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "8px" }}>
+                        <span style={{ fontWeight: 700, fontSize: "0.95rem" }}>{alert.drug}</span>
+                        <span style={{ fontSize: "0.7rem", color: "#9ca3af", fontWeight: 600, textTransform: "uppercase" }}>{alert.date}</span>
                       </div>
-                      <span style={{ fontSize: "0.75rem", color: "#9ca3af" }}>{alert.date}</span>
+                      <p style={{ color: "#f43f5e", fontSize: "0.85rem", fontWeight: 600, margin: "0 0 6px" }}>{alert.change}</p>
+                      <p style={{ fontSize: "0.8rem", color: "#64748b", margin: 0, lineHeight: 1.5 }}>{alert.description}</p>
+                      <div style={{ marginTop: "12px", display: "flex", alignItems: "center", gap: "6px" }}>
+                        <span style={{ fontSize: "0.7rem", color: "#475569", fontWeight: 600 }}>{alert.payer}</span>
+                        <ArrowRight size={14} color="#94a3b8" />
+                      </div>
                     </div>
                   ))}
                 </div>
@@ -550,8 +588,211 @@ export default function PolicyPulse() {
           </section>
         ) : activeTab === "vault" ? (
           <section>
-            <h1 style={{ fontSize: "2rem", fontWeight: 700 }}>Vault</h1>
-            <p style={{ color: "#6b7280", marginTop: "1rem" }}>Secure storage for all your policy documents and analysis.</p>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "2rem" }}>
+              <div>
+                <h1 style={{ fontSize: "2rem", fontWeight: 700, letterSpacing: "-0.04em" }}>Policy Vault</h1>
+                <p style={{ color: "#6b7280", marginTop: "0.5rem" }}>Secure storage and AI summary for your health policy documents.</p>
+              </div>
+              <button 
+                onClick={() => {
+                  const newDoc = { 
+                    name: `New Policy Update ${new Date().toLocaleTimeString()}.pdf`, 
+                    size: "1.2 MB", 
+                    date: "Just now",
+                    status: "Processing"
+                  };
+                  setUploadedDocs([newDoc, ...uploadedDocs]);
+                }}
+                style={{ background: "#084d38", color: "white", border: "none", borderRadius: "10px", padding: "10px 24px", fontSize: "0.95rem", fontWeight: 600, cursor: "pointer", display: "flex", alignItems: "center", gap: "8px" }}
+              >
+                <Plus size={18} /> Upload Document
+              </button>
+            </div>
+
+            {/* Card Grid View */}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {uploadedDocs.map((doc, i) => (
+                <div key={i} style={{ 
+                  background: "white", 
+                  borderRadius: "24px", 
+                  padding: "1.5rem", 
+                  border: "1px solid #f1f5f9", 
+                  display: "flex", 
+                  flexDirection: "column",
+                  transition: "all 0.2s",
+                  cursor: "pointer",
+                  position: "relative",
+                  animation: doc.date === "Just now" ? "fadeInUp 0.4s ease-out" : "none"
+                }} className="hover:shadow-xl hover:-translate-y-1 group" onClick={() => setSelectedDoc(doc)}>
+                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "start", marginBottom: "1.5rem" }}>
+                    <div style={{ background: "#f8fafc", padding: "12px", borderRadius: "16px", border: "1px solid #f1f5f9" }}>
+                      <FileText size={24} color="#084d38" />
+                    </div>
+                    <span style={{ 
+                      background: doc.status === "Analyzed" ? "#dcfce7" : "#fef3c7", 
+                      color: doc.status === "Analyzed" ? "#166534" : "#92400e", 
+                      padding: "4px 12px", 
+                      borderRadius: "100px", 
+                      fontSize: "0.75rem", 
+                      fontWeight: 700,
+                      textTransform: "uppercase",
+                      letterSpacing: "0.02em"
+                    }}>
+                      {doc.status || "Processing"}
+                    </span>
+                  </div>
+                  
+                  <h3 style={{ fontSize: "1.1rem", fontWeight: 700, color: "#1e293b", margin: "0 0 4px", lineHeight: 1.4 }}>{doc.name}</h3>
+                  <p style={{ fontSize: "0.85rem", color: "#94a3b8", margin: "0 0 1.5rem" }}>{doc.size} &middot; {doc.date}</p>
+                  
+                  <div style={{ marginTop: "auto", display: "flex", gap: "10px", paddingTop: "1.2rem", borderTop: "1px solid #f8fafc" }}>
+                    <button 
+                      onClick={(e) => { e.stopPropagation(); setSelectedDoc(doc); }}
+                      style={{ 
+                        flex: 1, 
+                        background: "#084d38", 
+                        color: "white", 
+                        border: "none", 
+                        borderRadius: "10px", 
+                        padding: "10px", 
+                        fontSize: "0.85rem", 
+                        fontWeight: 600, 
+                        cursor: "pointer",
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        gap: "6px"
+                      }}
+                    >
+                      <Sparkles size={14} /> Preview AI
+                    </button>
+                    <button 
+                      onClick={(e) => { e.stopPropagation(); }}
+                      style={{ 
+                        width: "40px", 
+                        height: "40px", 
+                        background: "#f8fafc", 
+                        border: "1px solid #f1f5f9", 
+                        borderRadius: "10px", 
+                        display: "flex", 
+                        alignItems: "center", 
+                        justifyContent: "center", 
+                        cursor: "pointer", 
+                        color: "#94a3b8" 
+                      }}
+                      className="hover:border-[#084d38] hover:text-[#084d38]"
+                    >
+                      <Download size={18} />
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            {/* Immersive Modal for Preview */}
+            {selectedDoc && (
+              <div 
+                style={{ 
+                  position: "fixed", 
+                  top: 0, 
+                  left: 0, 
+                  right: 0, 
+                  bottom: 0, 
+                  background: "rgba(0, 0, 0, 0.4)", 
+                  backdropFilter: "blur(8px)",
+                  display: "flex", 
+                  alignItems: "center", 
+                  justifyContent: "center", 
+                  zIndex: 1000,
+                  animation: "fadeIn 0.2s ease-out"
+                }}
+                onClick={() => setSelectedDoc(null)}
+              >
+                <div 
+                  style={{ 
+                    background: "white", 
+                    width: "90%", 
+                    maxWidth: "600px", 
+                    borderRadius: "32px", 
+                    padding: "2.5rem", 
+                    boxShadow: "0 25px 50px -12px rgba(0, 0, 0, 0.25)",
+                    position: "relative",
+                    animation: "scaleIn 0.3s cubic-bezier(0.34, 1.56, 0.64, 1)"
+                  }}
+                  onClick={(e) => e.stopPropagation()}
+                >
+                  <button 
+                    onClick={() => setSelectedDoc(null)}
+                    style={{ position: "absolute", top: "1.5rem", right: "1.5rem", background: "#f3f4f6", border: "none", width: "40px", height: "40px", borderRadius: "50%", fontSize: "1.5rem", color: "#6b7280", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center" }}
+                  >
+                    &times;
+                  </button>
+
+                  <div style={{ display: "flex", alignItems: "center", gap: "12px", marginBottom: "1.5rem" }}>
+                    <div style={{ background: "#f0fdf4", padding: "10px", borderRadius: "12px" }}>
+                      <FileText size={24} color="#084d38" />
+                    </div>
+                    <div>
+                      <h2 style={{ fontSize: "1.4rem", fontWeight: 700, margin: 0 }}>Document Analysis</h2>
+                      <p style={{ fontSize: "0.9rem", color: "#6b7280", margin: 0 }}>{selectedDoc.name}</p>
+                    </div>
+                  </div>
+
+                  <div style={{ background: "#f8fafc", borderRadius: "20px", padding: "2rem", border: "1px solid #f1f5f9" }}>
+                    <div style={{ display: "flex", alignItems: "center", gap: "10px", marginBottom: "1rem" }}>
+                      <Sparkles size={20} color="#084d38" />
+                      <span style={{ fontWeight: 700, fontSize: "1rem", color: "#1e293b" }}>PulseAI Insight</span>
+                    </div>
+                    <p style={{ fontSize: "0.95rem", lineHeight: 1.7, color: "#475569", margin: "0 0 1.5rem" }}>
+                      This policy update includes <strong>critical changes to PD-1 inhibitor access</strong>. 
+                      PulseAI has identified that step therapy now requires a trial of at least 2 biosimilars before access to biologics.
+                    </p>
+                    <div style={{ paddingTop: "1.5rem", borderTop: "1px solid #e2e8f0" }}>
+                      <p style={{ fontSize: "0.8rem", fontWeight: 700, color: "#94a3b8", textTransform: "uppercase", marginBottom: "1rem", letterSpacing: "0.05em" }}>Policy Highlights</p>
+                      <ul style={{ padding: 0, margin: 0, listStyle: "none", display: "flex", flexDirection: "column", gap: "12px" }}>
+                        {[
+                          "Step therapy requirement updated",
+                          "Prior Authorization window: 12 months",
+                          "Supporting labs required for enrollment"
+                        ].map((t, i) => (
+                          <li key={i} style={{ display: "flex", gap: "10px", fontSize: "0.9rem", color: "#1e293b", fontWeight: 500 }}>
+                            <div style={{ width: "8px", height: "8px", borderRadius: "50%", background: "#10b981", marginTop: "7px" }} />
+                            {t}
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  </div>
+                  
+                  <div style={{ marginTop: "2rem", display: "flex", gap: "12px" }}>
+                    <button 
+                      onClick={() => setSelectedDoc(null)}
+                      style={{ flex: 1, background: "#f3f4f6", border: "none", borderRadius: "12px", padding: "14px", fontSize: "1rem", fontWeight: 600, color: "#475569", cursor: "pointer" }}
+                    >
+                      Close Preview
+                    </button>
+                    <button style={{ flex: 1, background: "#084d38", border: "none", borderRadius: "12px", padding: "14px", fontSize: "1rem", fontWeight: 600, color: "white", cursor: "pointer" }}>
+                      Download PDF
+                    </button>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            <style>{`
+              @keyframes fadeInUp {
+                from { opacity: 0; transform: translateY(20px); }
+                to { opacity: 1; transform: translateY(0); }
+              }
+              @keyframes fadeIn {
+                from { opacity: 0; }
+                to { opacity: 1; }
+              }
+              @keyframes scaleIn {
+                from { transform: scale(0.9); opacity: 0; }
+                to { transform: scale(1); opacity: 1; }
+              }
+            `}</style>
           </section>
         ) : (
           <section>
