@@ -1,8 +1,9 @@
 "use client";
 
 import { useState } from "react";
-import { HeartPulse, ChevronDown, Search, LayoutGrid, Box, Moon, LogIn, LogOut, Sparkles, FileText, Pill, Database, Building2, Clock, Plus, Upload, ArrowRight, CheckCircle2, Activity, Calendar, ClipboardList, LayoutList } from "lucide-react";
+import { HeartPulse, ChevronDown, Search, LayoutGrid, Box, Moon, LogIn, LogOut, Sparkles, FileText, Pill, Database, Building2, Clock, Plus, Upload, ArrowRight, CheckCircle2, Activity, Calendar, ClipboardList, LayoutList, TrendingUp, AlertCircle, ShieldCheck } from "lucide-react";
 import { useUser } from "@auth0/nextjs-auth0";
+import CoverageGrid from "@/components/CoverageGrid";
 
 const hour = new Date().getHours();
 const greeting =
@@ -254,6 +255,27 @@ export default function PolicyPulse() {
           </button>
 
           <button
+            onClick={() => setActiveTab("coverage")}
+            style={{
+              background: activeTab === "coverage" ? "#f3f4f6" : "none",
+              border: "none",
+              cursor: "pointer",
+              color: activeTab === "coverage" ? "#111" : "#6b7280",
+              padding: activeTab === "coverage" ? "8px 16px" : "8px",
+              borderRadius: "12px",
+              display: "flex",
+              alignItems: "center",
+              gap: "10px",
+              transition: "all 0.2s ease",
+            }}
+          >
+            <LayoutList size={20} strokeWidth={2} />
+            {activeTab === "coverage" && (
+              <span style={{ fontWeight: 500, fontSize: "0.95rem" }}>Coverage</span>
+            )}
+          </button>
+
+          <button
             onClick={() => setActiveTab("settings")}
             style={{
               background: activeTab === "settings" ? "#f3f4f6" : "none",
@@ -342,6 +364,7 @@ export default function PolicyPulse() {
                   fontWeight: 600,
                   letterSpacing: "0.1em",
                   textTransform: "uppercase",
+                  color: "#6b7280"
                 }}
               >
                 {new Date().toLocaleDateString("en-US", {
@@ -395,7 +418,136 @@ export default function PolicyPulse() {
                 </div>
               </div>
             </section>
+
+            {/* 2x2 Grid Layout */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-10">
+              {/* Hero Card - Market Trends */}
+              <div className="md:col-span-2" style={{
+                background: "linear-gradient(135deg, #084d38 0%, #0a5f45 100%)",
+                borderRadius: "24px",
+                padding: "2.5rem",
+                color: "white",
+                position: "relative",
+                overflow: "hidden",
+                boxShadow: "0 20px 40px rgba(8, 77, 56, 0.15)"
+              }}>
+                <div style={{ position: "relative", zIndex: 1 }}>
+                  <div style={{ display: "flex", alignItems: "center", gap: "10px", marginBottom: "1.5rem" }}>
+                    <TrendingUp size={20} />
+                    <span style={{ fontWeight: 600, fontSize: "0.9rem", textTransform: "uppercase", letterSpacing: "0.05em" }}>Market Intelligence</span>
+                  </div>
+                  <h2 style={{ fontSize: "2.5rem", fontWeight: 700, lineHeight: 1.1, marginBottom: "1rem", letterSpacing: "-0.02em" }}>
+                    Market access shifting for PD-1 inhibitors in NSCLC.
+                  </h2>
+                  <p style={{ fontSize: "1.1rem", opacity: 0.9, maxWidth: "600px", lineHeight: 1.6 }}>
+                    PulseAI detected 3 major policy updates this morning from Aetna and UHC affecting oncology coverage.
+                  </p>
+                  <button
+                    onClick={() => setActiveTab("coverage")}
+                    style={{
+                      marginTop: "2rem",
+                      background: "white",
+                      color: "#084d38",
+                      border: "none",
+                      padding: "12px 24px",
+                      borderRadius: "12px",
+                      fontWeight: 600,
+                      display: "flex",
+                      alignItems: "center",
+                      gap: "8px",
+                      cursor: "pointer",
+                      transition: "transform 0.2s"
+                    }}
+                    onMouseOver={(e) => (e.currentTarget.style.transform = "translateY(-2px)")}
+                    onMouseOut={(e) => (e.currentTarget.style.transform = "translateY(0)")}
+                  >
+                    Analyze Coverage Changes <ArrowRight size={18} />
+                  </button>
+                </div>
+                <div style={{
+                  position: "absolute",
+                  right: "-50px",
+                  bottom: "-50px",
+                  opacity: 0.1
+                }}>
+                  <Sparkles size={300} />
+                </div>
+              </div>
+
+              {/* Card 2: Coverage Overview */}
+              <div style={{
+                background: "white",
+                borderRadius: "24px",
+                padding: "1.5rem",
+                border: "1px solid #f1f5f9",
+                boxShadow: "0 4px 6px -1px rgba(0, 0, 0, 0.05)"
+              }}>
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "1.5rem" }}>
+                  <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+                    <div style={{ background: "#f0fdf4", padding: "8px", borderRadius: "10px" }}>
+                      <ShieldCheck size={20} color="#10b981" />
+                    </div>
+                    <span style={{ fontWeight: 600, fontSize: "1rem" }}>Coverage Summary</span>
+                  </div>
+                  <span style={{ fontSize: "0.8rem", color: "#6b7280" }}>Across all payers</span>
+                </div>
+                <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
+                  {[
+                    { label: "Covered", count: 184, color: "#10b981", percent: 65 },
+                    { label: "PA Required", count: 72, color: "#f59e0b", percent: 25 },
+                    { label: "Not Covered", count: 28, color: "#ef4444", percent: 10 },
+                  ].map((item, i) => (
+                    <div key={i} style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
+                      <div style={{ display: "flex", justifyContent: "space-between", fontSize: "0.85rem" }}>
+                        <span style={{ color: "#374151", fontWeight: 500 }}>{item.label}</span>
+                        <span style={{ fontWeight: 600 }}>{item.count}</span>
+                      </div>
+                      <div style={{ height: "6px", background: "#f3f4f6", borderRadius: "3px", overflow: "hidden" }}>
+                        <div style={{ width: `${item.percent}%`, height: "100%", background: item.color, borderRadius: "3px" }} />
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Card 3: Recent Alerts */}
+              <div style={{
+                background: "white",
+                borderRadius: "24px",
+                padding: "1.5rem",
+                border: "1px solid #f1f5f9",
+                boxShadow: "0 4px 6px -1px rgba(0, 0, 0, 0.05)"
+              }}>
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "1.5rem" }}>
+                  <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+                    <div style={{ background: "#fff1f2", padding: "8px", borderRadius: "10px" }}>
+                      <AlertCircle size={20} color="#f43f5e" />
+                    </div>
+                    <span style={{ fontWeight: 600, fontSize: "1rem" }}>Critical Changes</span>
+                  </div>
+                  <span style={{ fontSize: "0.8rem", color: "#6b7280" }}>Last 24h</span>
+                </div>
+                <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
+                  {[
+                    { drug: "Keytruda", payer: "Cigna", change: "Step Therapy Added", date: "2h ago" },
+                    { drug: "Humira", payer: "Aetna", change: "Criteria Update", date: "5h ago" },
+                  ].map((alert, i) => (
+                    <div key={i} style={{ display: "flex", alignItems: "start", gap: "12px", paddingBottom: i === 0 ? "1rem" : 0, borderBottom: i === 0 ? "1px solid #f1f5f9" : "none" }}>
+                      <div style={{ flex: 1 }}>
+                        <p style={{ fontSize: "0.9rem", fontWeight: 600, color: "#111", margin: 0 }}>{alert.drug} &middot; {alert.payer}</p>
+                        <p style={{ fontSize: "0.8rem", color: "#f43f5e", margin: "2px 0 0" }}>{alert.change}</p>
+                      </div>
+                      <span style={{ fontSize: "0.75rem", color: "#9ca3af" }}>{alert.date}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
           </>
+        ) : activeTab === "coverage" ? (
+          <section>
+            <CoverageGrid />
+          </section>
         ) : activeTab === "vault" ? (
           <section>
             <h1 style={{ fontSize: "2rem", fontWeight: 700 }}>Vault</h1>
