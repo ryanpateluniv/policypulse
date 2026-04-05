@@ -16,7 +16,7 @@ const COLORS = {
   not_addressed: { bg: "#f3f4f6", border: "#d1d5db", text: "#6b7280", label: "No Data" },
 };
 
-function getStatusInfo(entry) {
+function getStatusInfo(entry: any) {
   if (!entry) return COLORS.not_addressed;
   if (entry.coverage_status === "not_covered") return COLORS.not_covered;
   if (entry.is_preferred) return COLORS.preferred;
