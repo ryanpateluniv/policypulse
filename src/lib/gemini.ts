@@ -24,6 +24,8 @@ export async function callGemini(prompt: string) {
 }
 
 export async function parsePolicyDocument(pdfText: string) {
+  const text = pdfText.substring(0, 100000)
+
   const prompt = `You are a medical policy document parser. Extract drug coverage information from this document.
 
 IMPORTANT RULES:
@@ -31,6 +33,13 @@ IMPORTANT RULES:
 - If a drug above is not in the document, skip it
 - Return ONLY valid JSON with NO markdown backticks, NO explanation, NO extra text
 - Start your response with { and end with }
+- NEVER use "All indications" or "All conditions" as an indication name. Always list each indication separately.
+- If a drug is blanket not-covered, expand into individual indications:
+  For Humira: Rheumatoid Arthritis, Psoriatic Arthritis, Ankylosing Spondylitis, Crohn's Disease, Ulcerative Colitis, Plaque Psoriasis, Hidradenitis Suppurativa, Uveitis
+  For Keytruda: NSCLC, Melanoma, Head & Neck Cancer, Breast Cancer (TNBC), Renal Cell Carcinoma, Urothelial Carcinoma, Colorectal Cancer, Endometrial Carcinoma
+- Keep clinical_criteria under 200 chars
+- Use these EXACT indication names (standardized):
+  Rheumatoid Arthritis, Psoriatic Arthritis, Ankylosing Spondylitis, Crohn's Disease, Ulcerative Colitis, Plaque Psoriasis, Hidradenitis Suppurativa, Uveitis, Juvenile Idiopathic Arthritis, Behcet's Disease, NSCLC, Melanoma, Head & Neck Cancer, Breast Cancer (TNBC), Renal Cell Carcinoma, Urothelial Carcinoma, Colorectal Cancer, Endometrial Carcinoma, Cervical Cancer, Gastric Cancer, Esophageal Cancer, Hepatocellular Carcinoma, Merkel Cell Carcinoma, Biliary Tract Cancer, Squamous Cell Skin Cancer, Hodgkin Lymphoma, Small Cell Lung Cancer
 
 Return this exact JSON format:
 {
@@ -43,16 +52,16 @@ Return this exact JSON format:
       "generic_name": "string",
       "indications": [
         {
-          "indication_name": "string",
-          "coverage_status": "covered | covered_with_pa | not_covered | not_addressed",
+          "indication_name": "use exact standardized name from list above",
+          "coverage_status": "covered | covered_with_pa | not_covered",
           "is_preferred": true/false,
           "prior_auth_required": true/false,
           "step_therapy_required": true/false,
-          "step_therapy_drugs": ["drug names that must be tried first"],
-          "clinical_criteria": "brief summary of approval criteria (max 200 chars)",
-          "approval_duration": "e.g. 12 months",
-          "exclusions": "exclusion criteria or null",
-          "age_restrictions": "e.g. 18+ or null"
+          "step_therapy_drugs": [],
+          "clinical_criteria": "brief requirements (max 200 chars)",
+          "approval_duration": "string or null",
+          "exclusions": "string or null",
+          "age_restrictions": "string or null"
         }
       ]
     }
@@ -60,12 +69,11 @@ Return this exact JSON format:
 }
 
 DOCUMENT TEXT:
-${pdfText}`
+${text}`
 
   const result = await callGemini(prompt)
 
   try {
-    // Remove any markdown backticks if present
     let cleaned = result.trim()
     if (cleaned.startsWith('```')) {
       cleaned = cleaned.replace(/^```json?\n?/, '').replace(/\n?```$/, '')

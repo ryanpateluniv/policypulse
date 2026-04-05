@@ -7,9 +7,10 @@ interface DashboardOverviewProps {
   user: any;
   greeting: string;
   setActiveTab: (tab: string) => void;
+  uploadedDocs?: any[];
 }
 
-export default function DashboardOverview({ user, greeting, setActiveTab }: DashboardOverviewProps) {
+export default function DashboardOverview({ user, greeting, setActiveTab, uploadedDocs = [] }: DashboardOverviewProps) {
   return (
     <>
       {/* Greeting */}
@@ -66,6 +67,11 @@ export default function DashboardOverview({ user, greeting, setActiveTab }: Dash
               <span style={{ fontSize: "0.8rem", color: "#6b7280" }}>Policies</span>
             </div>
             <div style={{ height: "16px", width: "1px", background: "#e5e7eb" }} />
+            <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+              <Activity size={16} color="#3b82f6" />
+              <span style={{ fontSize: "0.8rem", fontWeight: 700, color: "#111" }}>3</span>
+              <span style={{ fontSize: "0.8rem", color: "#6b7280" }}>Payers</span>
+            </div>
           </div>
         </div>
       </section>
@@ -177,19 +183,24 @@ export default function DashboardOverview({ user, greeting, setActiveTab }: Dash
               <span style={{ fontWeight: 600, fontSize: "1rem" }}>PulseAI Quick Look</span>
             </div>
           </div>
-          <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
-            <div style={{ padding: "12px", borderRadius: "12px", background: "#f8fafc", fontSize: "0.85rem", color: "#475569", border: "1px solid #f1f5f9" }}>
-              <span style={{ fontWeight: 700, color: "#1e293b", display: "block", marginBottom: "4px" }}>Trending Drug</span>
-              Opdivo (nivolumab) search volume up 24% this week.
+          {uploadedDocs.length > 0 ? (
+            <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
+              {uploadedDocs.slice(0, 2).map((doc, i) => (
+                <div key={i} style={{ padding: "12px", borderRadius: "12px", background: "#f8fafc", fontSize: "0.85rem", color: "#475569", border: "1px solid #f1f5f9" }}>
+                  <span style={{ fontWeight: 700, color: "#1e293b", display: "block", marginBottom: "4px" }}>{doc.payer}</span>
+                  {doc.name} &mdash; {doc.coverage_entries || 0} entries
+                </div>
+              ))}
             </div>
-            <div style={{ padding: "12px", borderRadius: "12px", background: "#f8fafc", fontSize: "0.85rem", color: "#475569", border: "1px solid #f1f5f9" }}>
-              <span style={{ fontWeight: 700, color: "#1e293b", display: "block", marginBottom: "4px" }}>Policy Update</span>
-              Aetna Oncology guidelines refreshed for Q2.
+          ) : (
+            <div style={{ padding: "24px", textAlign: "center", borderRadius: "12px", background: "#f8fafc", border: "1px dashed #e2e8f0" }}>
+              <p style={{ fontSize: "0.85rem", color: "#94a3b8", margin: 0 }}>Upload documents in the Vault to see AI insights here.</p>
+              <button onClick={() => setActiveTab("vault")} style={{ marginTop: "10px", background: "#084d38", color: "white", border: "none", borderRadius: "8px", padding: "8px 16px", fontSize: "0.8rem", fontWeight: 600, cursor: "pointer" }}>Go to Vault</button>
             </div>
-          </div>
+          )}
         </div>
 
-        {/* Card 4: Recent Alerts */}
+        {/* Card 4: Recent Alerts — real data from uploaded docs */}
         <div className="md:col-span-2" style={{
           background: "white",
           borderRadius: "24px",
@@ -202,30 +213,34 @@ export default function DashboardOverview({ user, greeting, setActiveTab }: Dash
               <div style={{ background: "#fff1f2", padding: "8px", borderRadius: "10px" }}>
                 <AlertCircle size={20} color="#f43f5e" />
               </div>
-              <span style={{ fontWeight: 600, fontSize: "1.2rem" }}>Critical Policy Changes Detected</span>
+              <span style={{ fontWeight: 600, fontSize: "1.2rem" }}>Uploaded Policy Library</span>
             </div>
-            <span style={{ fontSize: "0.85rem", color: "#6b7280" }}>PulseAI Monitoring • Last 24h</span>
+            <span style={{ fontSize: "0.85rem", color: "#6b7280" }}>Documents from Vault</span>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {[
-              { drug: "Keytruda", payer: "Cigna", change: "Step Therapy Added", description: "Cigna updated oncology protocols to require biosimilar trial first.", date: "2h ago", severity: "high" },
-              { drug: "Humira", payer: "Aetna", change: "Criteria Update", description: "New clinical criteria for plaque psoriasis coverage effective immediately.", date: "5h ago", severity: "medium" },
-              { drug: "Dupixent", payer: "UHC", change: "Payer coverage", description: "Coverage expanded to include EoE indications in adolescents.", date: "8h ago", severity: "low" },
-            ].map((alert, i) => (
-              <div key={i} style={{ padding: "1.2rem", borderRadius: "16px", background: "#f8fafc", border: "1px solid #f1f5f9" }}>
-                <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "8px" }}>
-                  <span style={{ fontWeight: 700, fontSize: "0.95rem" }}>{alert.drug}</span>
-                  <span style={{ fontSize: "0.7rem", color: "#9ca3af", fontWeight: 600, textTransform: "uppercase" }}>{alert.date}</span>
+          {uploadedDocs.length > 0 ? (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {uploadedDocs.map((doc, i) => (
+                <div key={i} style={{ padding: "1.2rem", borderRadius: "16px", background: "#f8fafc", border: "1px solid #f1f5f9" }}>
+                  <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "8px" }}>
+                    <span style={{ fontWeight: 700, fontSize: "0.95rem" }}>{doc.payer || "Unknown Payer"}</span>
+                    <span style={{ fontSize: "0.7rem", color: "#9ca3af", fontWeight: 600, textTransform: "uppercase" }}>{doc.date}</span>
+                  </div>
+                  <p style={{ color: "#084d38", fontSize: "0.85rem", fontWeight: 600, margin: "0 0 6px" }}>{doc.status}</p>
+                  <p style={{ fontSize: "0.8rem", color: "#64748b", margin: 0, lineHeight: 1.5, wordBreak: "break-word" }}>{doc.name}</p>
+                  <div style={{ marginTop: "12px", display: "flex", alignItems: "center", gap: "6px" }}>
+                    <span style={{ fontSize: "0.7rem", color: "#475569", fontWeight: 600 }}>{doc.drugs_found || 0} drugs &middot; {doc.coverage_entries || 0} entries</span>
+                  </div>
                 </div>
-                <p style={{ color: "#f43f5e", fontSize: "0.85rem", fontWeight: 600, margin: "0 0 6px" }}>{alert.change}</p>
-                <p style={{ fontSize: "0.8rem", color: "#64748b", margin: 0, lineHeight: 1.5 }}>{alert.description}</p>
-                <div style={{ marginTop: "12px", display: "flex", alignItems: "center", gap: "6px" }}>
-                  <span style={{ fontSize: "0.7rem", color: "#475569", fontWeight: 600 }}>{alert.payer}</span>
-                  <ArrowRight size={14} color="#94a3b8" />
-                </div>
-              </div>
-            ))}
-          </div>
+              ))}
+            </div>
+          ) : (
+            <div style={{ padding: "48px 0", textAlign: "center" }}>
+              <ShieldCheck size={36} color="#d1d5db" style={{ marginBottom: "12px" }} />
+              <p style={{ color: "#94a3b8", fontWeight: 600, margin: 0 }}>No documents uploaded yet.</p>
+              <p style={{ fontSize: "0.85rem", color: "#cbd5e1", marginTop: "6px" }}>Upload policy PDFs in the Vault to see them here.</p>
+              <button onClick={() => setActiveTab("vault")} style={{ marginTop: "16px", background: "#084d38", color: "white", border: "none", borderRadius: "10px", padding: "10px 20px", fontWeight: 600, cursor: "pointer" }}>Open Vault</button>
+            </div>
+          )}
         </div>
       </div>
     </>

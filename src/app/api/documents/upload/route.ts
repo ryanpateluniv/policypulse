@@ -5,6 +5,71 @@ import { execSync } from 'child_process'
 import { writeFileSync, unlinkSync } from 'fs'
 import { join } from 'path'
 
+function normalizeIndication(name: string): string {
+  let clean = name
+    .replace(/\s*\(including.*?\)/gi, '')
+    .replace(/\s*\(also known as.*?\)/gi, '')
+    .replace(/\s*-\s*(Adult|Pediatric|Adolescent)/gi, '')
+    .replace(/\s*\([A-Z]{1,5}\)/g, '')  // Remove (RA), (CD), (UC) etc
+    .replace(/\s*\(nr-axSpA\)/gi, '')
+    .replace(/\s*\(non-infectious.*?\)/gi, '')
+    .trim()
+
+  // Map common variations to standard names
+  const mappings: Record<string, string> = {
+    "rheumatoid arthritis": "Rheumatoid Arthritis",
+    "crohn's disease": "Crohn's Disease",
+    "crohn's disease": "Crohn's Disease",
+    "ulcerative colitis": "Ulcerative Colitis",
+    "plaque psoriasis": "Plaque Psoriasis",
+    "psoriatic arthritis": "Psoriatic Arthritis",
+    "ankylosing spondylitis": "Ankylosing Spondylitis",
+    "non-radiographic axial spondyloarthritis": "Ankylosing Spondylitis",
+    "hidradenitis suppurativa": "Hidradenitis Suppurativa",
+    "juvenile idiopathic arthritis": "Juvenile Idiopathic Arthritis",
+    "articular juvenile idiopathic arthritis": "Juvenile Idiopathic Arthritis",
+    "uveitis": "Uveitis",
+    "behcet's disease": "Behcet's Disease",
+    "behcet's disease": "Behcet's Disease",
+    "pyoderma gangrenosum": "Pyoderma Gangrenosum",
+    "sarcoidosis": "Sarcoidosis",
+    "polymyalgia rheumatica": "Polymyalgia Rheumatica",
+    "spondyloarthritis, other subtypes": "Spondyloarthritis",
+    "scleritis or sterile corneal ulceration": "Scleritis",
+    "non-small cell lung cancer": "NSCLC",
+    "cutaneous melanoma": "Melanoma",
+    "head and neck cancer": "Head & Neck Cancer",
+    "breast cancer": "Breast Cancer (TNBC)",
+    "renal cell carcinoma": "Renal Cell Carcinoma",
+    "urothelial carcinoma": "Urothelial Carcinoma",
+    "colorectal cancer": "Colorectal Cancer",
+    "endometrial carcinoma": "Endometrial Carcinoma",
+    "cervical cancer": "Cervical Cancer",
+    "hepatocellular carcinoma": "Hepatocellular Carcinoma",
+    "gastric cancer": "Gastric Cancer",
+    "esophageal cancer": "Esophageal Cancer",
+    "merkel cell carcinoma": "Merkel Cell Carcinoma",
+    "biliary tract cancers": "Biliary Tract Cancer",
+    "squamous cell skin cancer": "Squamous Cell Skin Cancer",
+    "cutaneous squamous cell skin carcinoma": "Squamous Cell Skin Cancer",
+    "nasopharyngeal carcinoma": "Nasopharyngeal Carcinoma",
+    "classic hodgkin lymphoma": "Hodgkin Lymphoma",
+    "small cell lung cancer": "Small Cell Lung Cancer",
+    "multiple myeloma": "Multiple Myeloma",
+    "active infections": "Active Infections",
+    "immune checkpoint inhibitor-related toxicity": "Immune Checkpoint Toxicity",
+  }
+
+  const lower = clean.toLowerCase()
+  for (const [key, value] of Object.entries(mappings)) {
+    if (lower.includes(key)) {
+      return value
+    }
+  }
+
+  return clean
+}
+
 export async function POST(request: NextRequest) {
   const supabase = getServiceClient()
 
@@ -53,7 +118,7 @@ export async function POST(request: NextRequest) {
     try {
       cleanText = execSync(`python3 python-service/extract.py "${tmpPath}"`, {
         maxBuffer: 50 * 1024 * 1024,
-      }).toString().substring(0, 100000)
+      }).toString().substring(0, 150000)
     } finally {
       try { unlinkSync(tmpPath) } catch {}
     }
@@ -71,10 +136,16 @@ export async function POST(request: NextRequest) {
     const coverageEntries = []
 
     for (const drug of parsed.drugs || []) {
+      // Normalize drug name - strip NDC info and parenthetical details
+      let cleanName = drug.brand_name
+        .replace(/\s*\(NDCs?\s+starting\s+with\s+\d+\)/i, '')
+        .replace(/\s*\(NDCs?\s+\d+\)/i, '')
+        .trim()
+
       let { data: existingDrug } = await supabase
         .from('drugs')
         .select('id')
-        .ilike('brand_name', drug.brand_name)
+        .ilike('brand_name', cleanName)
         .single()
 
       if (!existingDrug) {
@@ -96,7 +167,7 @@ export async function POST(request: NextRequest) {
           policy_document_id: doc.id,
           drug_id: existingDrug.id,
           payer_id: payer.id,
-          indication: indication.indication_name,
+           indication: normalizeIndication(indication.indication_name),
           coverage_status: indication.coverage_status,
           is_preferred: indication.is_preferred || false,
           prior_auth_required: indication.prior_auth_required || false,
