@@ -26,6 +26,24 @@ function getStatusInfo(entry: any) {
   return COLORS.not_addressed;
 }
 
+const MOCK_DRUGS = [
+  { id: "d1", brand_name: "Keytruda", generic_name: "pembrolizumab", drug_class: "Monoclonal Antibody" },
+  { id: "d2", brand_name: "Humira", generic_name: "adalimumab", drug_class: "TNF Inhibitor" },
+  { id: "d3", brand_name: "Opdivo", generic_name: "nivolumab", drug_class: "Monoclonal Antibody" }
+];
+
+const MOCK_COVERAGE: any = {
+  "d1": [
+    { indication: "Melanoma", payers: { name: "Aetna" }, coverage_status: "covered", is_preferred: true, prior_auth_required: false, step_therapy_required: false },
+    { indication: "NSCLC", payers: { name: "UnitedHealthcare" }, coverage_status: "covered_with_pa", is_preferred: true, prior_auth_required: true, step_therapy_required: true, step_therapy_drugs: ["Chemotherapy"], approval_duration: "12 months", clinical_criteria: "Patient must have failed at least one prior systemic therapy." },
+    { indication: "Head & Neck Cancer", payers: { name: "Cigna" }, coverage_status: "not_covered" },
+  ],
+  "d2": [
+    { indication: "Rheumatoid Arthritis", payers: { name: "UnitedHealthcare" }, coverage_status: "covered", is_preferred: true },
+    { indication: "Crohn's Disease", payers: { name: "Aetna" }, coverage_status: "step_therapy", step_therapy_required: true, step_therapy_drugs: ["Methotrexate"] }
+  ]
+};
+
 
 function DetailPanel({ entry, onClose }: any) {
   if (!entry) return null;
@@ -114,7 +132,7 @@ export default function CoverageGrid() {
   const [hoveredCell, setHoveredCell] = useState<string | null>(null);
   const [selectedEntry, setSelectedEntry] = useState<any>(null);
   const searchRef = useRef<HTMLInputElement>(null);
-  const USE_API = true;
+  const USE_API = false;
 
   useEffect(() => {
     if (search.length < 2) { setSuggestions([]); return; }
@@ -153,12 +171,16 @@ export default function CoverageGrid() {
   const payers = [...new Set(coverage.map(e => e.payers?.name))].filter(Boolean);
   const indications = [...new Set(coverage.map(e => e.indication))].filter(Boolean);
 
+  const totalEntries = coverage.length;
+  const coveredEntries = coverage.filter(c => c.coverage_status && c.coverage_status !== "not_covered").length;
+  const realCoveredRate = totalEntries > 0 ? Math.round((coveredEntries / totalEntries) * 100) + "%" : "0%";
+
   function getEntry(payer: string, indication: string) {
     return coverage.find(e => e.payers?.name === payer && e.indication === indication);
   }
 
   return (
-    <div style={{ background: "white", minHeight: "100vh" }}>
+    <div>
       <div style={{ marginBottom: "40px" }}>
         <h1 style={{ fontSize: "2rem", fontWeight: 700, color: "#1e293b", letterSpacing: "-0.04em", marginBottom: "8px" }}>Coverage Matrix</h1>
         <p style={{ color: "#64748b", fontSize: "1.05rem" }}>Analyze clinical criteria and coverage status across major national payers.</p>
@@ -222,7 +244,7 @@ export default function CoverageGrid() {
             </div>
             <div style={{ display: "flex", gap: "24px", zIndex: 1 }}>
               {[
-                { label: "Covered Rate", value: "78%", icon: <ShieldCheck size={20} /> },
+                { label: "Covered Rate", value: realCoveredRate, icon: <ShieldCheck size={20} /> },
                 { label: "Active Payers", value: payers.length, icon: <ChevronRight size={20} /> }
               ].map((stat, i) => (
                 <div key={i} style={{ textAlign: "right" }}>

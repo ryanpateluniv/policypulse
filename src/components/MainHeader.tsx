@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { HeartPulse, Sparkles, LayoutGrid, Box, LayoutList, Globe, MessageSquare, Menu } from "lucide-react";
+import { HeartPulse, Sparkles, LayoutGrid, Box, LayoutList, GitCompare, Menu, MessageSquare, LogOut, User } from "lucide-react";
 
 interface MainHeaderProps {
   activeTab: string;
@@ -28,6 +28,16 @@ export default function MainHeader({
   user,
   isLoading
 }: MainHeaderProps) {
+  const [showDropdown, setShowDropdown] = React.useState(false);
+
+  const tabs = [
+    { id: "dashboard", icon: <LayoutGrid size={18} />, label: "Dashboard" },
+    { id: "vault", icon: <Box size={18} />, label: "Vault" },
+    { id: "coverage", icon: <LayoutList size={18} />, label: "Coverage Matrix" },
+    { id: "audit", icon: <GitCompare size={18} />, label: "Audit" },
+    { id: "profile", icon: <User size={18} />, label: "Patient" },
+    { id: "pulseai", icon: <MessageSquare size={18} />, label: "PulseAI" }
+  ];
   return (
     <header
       style={{
@@ -129,13 +139,7 @@ export default function MainHeader({
       {/* Right side items - Responsive visibility */}
       <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", flexShrink: 0 }}>
         <div style={{ display: "flex", gap: "2px" }} className="hidden lg:flex">
-          {[
-            { id: "dashboard", icon: <LayoutGrid size={18} />, label: "Dashboard" },
-            { id: "vault", icon: <Box size={18} />, label: "Vault" },
-            { id: "coverage", icon: <LayoutList size={18} />, label: "Payer" },
-            { id: "diff", icon: <Globe size={18} />, label: "Monitor" },
-            { id: "pulseai", icon: <MessageSquare size={18} />, label: "PulseAI" }
-          ].map((tab, i) => (
+          {tabs.map((tab, i) => (
             <React.Fragment key={tab.id}>
               {i > 0 && <div style={{ alignSelf: "center", width: "1px", height: "16px", background: "#e2e8f0", margin: "0 4px" }} />}
               <button
@@ -173,27 +177,38 @@ export default function MainHeader({
 
         {/* User Card */}
         {!isLoading && user ? (
-          <div style={{ display: "flex", alignItems: "center", gap: "10px", padding: "4px", paddingRight: "12px", background: "#f8fafc", borderRadius: "100px", border: "1px solid #f1f5f9" }}>
-            <a href="/auth/logout" style={{ 
-              textDecoration: "none", 
-              width: "32px", 
-              height: "32px", 
-              borderRadius: "50%", 
-              background: "#084d38", 
-              backgroundSize: "cover", 
-              backgroundImage: user?.picture ? `url(${user.picture})` : "none", 
-              display: "flex", 
-              alignItems: "center", 
-              justifyContent: "center", 
-              fontSize: "0.75rem", 
-              fontWeight: 800, 
-              color: "white", 
-              cursor: "pointer",
-              boxShadow: "0 2px 8px rgba(8, 77, 56, 0.2)"
-            }}>
-              {!user?.picture && user?.name?.charAt(0)}
-            </a>
-            <span style={{ fontSize: "0.85rem", fontWeight: 700, color: "#1e293b" }} className="hidden md:inline">{user?.given_name || user?.name?.split(' ')[0]}</span>
+          <div style={{ position: "relative" }}>
+            <button 
+              onClick={() => setShowDropdown(!showDropdown)}
+              style={{ display: "flex", alignItems: "center", gap: "10px", padding: "4px", paddingRight: "12px", background: "#f8fafc", borderRadius: "100px", border: "1px solid #f1f5f9", cursor: "pointer" }}
+            >
+              <div style={{ 
+                width: "32px", 
+                height: "32px", 
+                borderRadius: "50%", 
+                background: "#084d38", 
+                backgroundSize: "cover", 
+                backgroundImage: user?.picture ? `url(${user.picture})` : "none", 
+                display: "flex", 
+                alignItems: "center", 
+                justifyContent: "center", 
+                fontSize: "0.75rem", 
+                fontWeight: 800, 
+                color: "white", 
+                boxShadow: "0 2px 8px rgba(8, 77, 56, 0.2)"
+              }}>
+                {!user?.picture && user?.name?.charAt(0)}
+              </div>
+              <span style={{ fontSize: "0.85rem", fontWeight: 700, color: "#1e293b" }} className="hidden md:inline">{user?.given_name || user?.name?.split(' ')[0]}</span>
+            </button>
+
+            {showDropdown && (
+              <div style={{ position: "absolute", top: "100%", right: 0, marginTop: "8px", background: "white", borderRadius: "12px", border: "1px solid #f1f5f9", padding: "8px", boxShadow: "0 10px 25px rgba(0,0,0,0.1)", zIndex: 200, width: "160px" }}>
+                <a href="/auth/logout" style={{ display: "flex", alignItems: "center", gap: "8px", padding: "10px 12px", color: "#dc2626", textDecoration: "none", fontSize: "0.85rem", fontWeight: 600, borderRadius: "8px", transition: "background 0.2s" }} onMouseOver={e => e.currentTarget.style.background = "#fef2f2"} onMouseOut={e => e.currentTarget.style.background = "transparent"}>
+                  <LogOut size={16} /> Logout
+                </a>
+              </div>
+            )}
           </div>
         ) : (
           <a href="/auth/login" style={{ textDecoration: "none", background: "#084d38", color: "white", padding: "10px 20px", borderRadius: "12px", fontSize: "0.9rem", fontWeight: 600, boxShadow: "0 4px 12px rgba(8, 77, 56, 0.2)" }}>Sign In</a>
